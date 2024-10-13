@@ -47,7 +47,7 @@ fun Greeting(name: String) {
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true) // Enable split-view in the top-right to preview this func.
 @Composable
 fun GreetingPreview() {
     WhisperTheme {
