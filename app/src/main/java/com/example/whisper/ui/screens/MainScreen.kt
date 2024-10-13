@@ -1,5 +1,7 @@
-package com.example.whisper
+package com.example.whisper.ui.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,14 +10,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController) {
+    val context = LocalContext.current
     val chats = remember { mutableStateListOf(
         "Chat 1" to "Expires in 2 hours",
         "Chat 2" to "Expires in 1 day",
@@ -25,7 +28,17 @@ fun MainScreen(navController: NavController) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Whisper") }) },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("createJoin") }) {
+            FloatingActionButton(
+                onClick = {
+                    Log.d("MainScreen", "FAB clicked. Attempting to navigate to createJoin")
+                    try {
+                        navController.navigate("createJoin")
+                    } catch (e: Exception) {
+                        Log.e("MainScreen", "Navigation failed", e)
+                        Toast.makeText(context, "Navigation failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            ) {
                 Icon(Icons.Default.Add, contentDescription = "Create or Join Chat")
             }
         }
