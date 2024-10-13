@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.example.whisper.ui.theme.WhisperTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +38,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $name!"
+        text = "Hello $name!",
+        color = Color.Blue, // Press ALT+Enter to resolve missing import.
+        fontSize = 30.sp  // E.g., on Color and .sp (text unit).
     )
 }
 
