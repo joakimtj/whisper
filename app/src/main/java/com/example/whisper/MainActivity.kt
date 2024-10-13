@@ -14,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,21 +24,19 @@ import com.example.whisper.ui.theme.WhisperTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             WhisperTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
-                )
-                    {
-                        Greeting("Whisper")
-                    }
+                ) {
+                    val navController = rememberNavController()
+                    MainScreen(navController)
                 }
             }
         }
     }
-
+}
 @Composable
 fun Greeting(name: String) {
     Text(
