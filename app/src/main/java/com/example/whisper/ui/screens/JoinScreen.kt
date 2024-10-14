@@ -1,5 +1,6 @@
 package com.example.whisper.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -26,6 +27,7 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
     var code by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var expires by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     Scaffold(
         topBar =
         {
@@ -62,16 +64,40 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
+                modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    if (code.isBlank())
-                        return@Button // Exit function early
-                    if (hasChatRoom(code))
-                        navController.navigate("chat/$code") // Not working.
-                    navController.navigate("create/$code")
-                },
-                modifier = Modifier.fillMaxWidth()
+                    Log.d("JoinButton", "Button clicked with code: $code")
+                    if (code.isBlank()) {
+                        errorMessage = "Please enter a room code"
+                        Log.d("JoinButton", "Code is blank")
+                        return@Button
+                    }
+
+                    val roomExists = hasChatRoom(code)
+                    Log.d("JoinButton", "Room exists: $roomExists for code: $code")
+
+                    if (roomExists) {
+                        Log.d("JoinButton", "Navigating to chat/$code")
+                        navController.navigate("chat/$code") {
+                            popUpTo("main") {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    } else {
+                        Log.d("JoinButton", "Navigating to create/$code")
+                        navController.navigate("create/$code") {
+                            popUpTo("join") {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                    errorMessage = null
+                }
             ) {
-                Text("Create or Join")
+                Text("Join or Create Room")
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text("Or")
