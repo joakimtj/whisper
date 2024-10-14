@@ -8,12 +8,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,7 +29,35 @@ fun MainScreen(navController: NavController) {
     ) }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Whisper") }) },
+        /*
+        * https://developer.android.com/develop/ui/compose/components/app-bar
+        * App bar code is based on the above documentation.
+        * */
+        topBar = { CenterAlignedTopAppBar(
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            title = { Text("Whisper") },
+            // navigationIcon = { ... } Think this is reserved for navigate back stuff.
+            actions = {
+                IconButton(onClick = {
+                    Log.d("SettingsScreen",
+                        "Icon clicked. Attempting to navigate to SettingsScreen")
+                    try {
+                        navController.navigate("settings")
+                    } catch (e: Exception) {
+                        Log.e("MainScreen", "Navigation to Settings failed", e)
+                        Toast.makeText(context, "Navigation failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = "SettingsScreen icon"
+                    )
+                }
+            }
+        ) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -71,4 +102,10 @@ fun ChatListItem(chatName: String, expirationTime: String, onClick: () -> Unit) 
             Text(text = expirationTime, style = MaterialTheme.typography.bodyMedium)
         }
     }
+}
+
+@Preview
+@Composable
+fun MainScreenPreview() {
+    MainScreen(rememberNavController())
 }

@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+// TODO: Replace mutable state list of Sting with Message object for display names and tripcodes.
+class Message (userName: String, tripCode: String, message: String) // Need to build out settings to set username.
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(roomId: String) {

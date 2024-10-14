@@ -22,7 +22,8 @@ fun WhisperNavHost() {
         }
         composable("settings") {
             Log.d("Navigation", "Navigating to SettingsScreen")
-            SettingsScreen()
+            // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
+            SettingsScreen(){navController.popBackStack()}
         }
         composable("createJoin") {
             Log.d("Navigation", "Navigating to CreateJoinScreen")

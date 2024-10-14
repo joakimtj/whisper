@@ -1,20 +1,44 @@
 package com.example.whisper.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    navigateBack: () -> Unit
+) {
     var displayName by remember { mutableStateOf("") }
     var tripcode by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Settings") }) }
+        topBar =
+        {
+            CenterAlignedTopAppBar(
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            title = { Text("Settings") },
+                navigationIcon = {
+                    // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
+                    // Passed navController.popBackStack() in WhisperNavHost
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Localized description"
+                        )
+                    }
+                } )
+        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -44,4 +68,10 @@ fun SettingsScreen() {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun SettingsScreenPreview() {
+    SettingsScreen(navigateBack = {})
 }
