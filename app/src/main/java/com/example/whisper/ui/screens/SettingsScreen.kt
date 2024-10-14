@@ -10,6 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+// TODO: Integrate with Settings var in DataStore
+// TODO: Current display-name reflected in TextField
+// Tripcode will look like this:
+// String: "ThisIsHashed" TripCode: d8091mfak23
+// Not a real example, just to illustrate the idea.
+// TODO: Implement tripcode hashing and have it update in a separate text element
+// Probably need to update the Settings data class to have a 'hash'-field for the hashed code.
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
