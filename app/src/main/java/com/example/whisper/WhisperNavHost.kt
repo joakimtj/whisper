@@ -2,9 +2,11 @@ package com.example.whisper
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.whisper.ui.screens.*
 
 @Composable
@@ -15,10 +17,17 @@ fun WhisperNavHost() {
             Log.d("Navigation", "Navigating to MainScreen")
             MainScreen(navController)
         }
-        composable("chat/{roomId}") { backStackEntry ->
+        composable("chat/{roomId}", arguments = listOf(navArgument("roomId") { type = NavType.StringType })) { backStackEntry ->
             val roomId = backStackEntry.arguments?.getString("roomId")
             Log.d("Navigation", "Navigating to ChatScreen with roomId: $roomId")
-            ChatScreen(roomId = roomId ?: ""){navController.popBackStack()}
+            ChatScreen(
+                roomId = roomId ?: "",
+                navigateBack = {
+                    navController.navigate("main") {
+                        popUpTo("main") { inclusive = true }
+                    }
+                }
+            )
         }
         composable("settings") {
             Log.d("Navigation", "Navigating to SettingsScreen")
