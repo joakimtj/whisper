@@ -18,7 +18,7 @@ fun WhisperNavHost() {
         composable("chat/{roomId}") { backStackEntry ->
             val roomId = backStackEntry.arguments?.getString("roomId")
             Log.d("Navigation", "Navigating to ChatScreen with roomId: $roomId")
-            ChatScreen(roomId = roomId ?: "")
+            ChatScreen(roomId = roomId ?: ""){navController.popBackStack()}
         }
         composable("settings") {
             Log.d("Navigation", "Navigating to SettingsScreen")

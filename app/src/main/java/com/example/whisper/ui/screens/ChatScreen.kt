@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,12 +21,31 @@ class Message (userName: String, tripCode: String, message: String) // Need to b
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(roomId: String) {
+fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
     var message by remember { mutableStateOf("") }
     val messages = remember { mutableStateListOf<String>() }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Chat: $roomId") }) }
+        topBar =
+        {
+            CenterAlignedTopAppBar(
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            title = { Text("Chat: $roomId") },
+            navigationIcon = {
+                    // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
+                    // Passed navController.popBackStack() in WhisperNavHost
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Localized description"
+                        )
+                    }
+                },
+            )
+        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -82,5 +102,5 @@ fun ChatScreen(roomId: String) {
 @Preview
 @Composable
 fun ChatScreenPreview() {
-    ChatScreen("Preview")
+    ChatScreen("Blop Glarp Appreciation", navigateBack = {})
 }
