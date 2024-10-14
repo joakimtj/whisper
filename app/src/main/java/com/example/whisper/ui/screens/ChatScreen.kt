@@ -16,8 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-// TODO: Replace mutable state list of Sting with Message object for display names and tripcodes.
-class Message (userName: String, tripCode: String, message: String) // Need to build out settings to set username.
+// TODO: Set up Firebase so we can build out our data structures.
+// TODO: Separate incoming and outgoing messages into two columns.
+// TODO: Replace message var with class object containing display name, tripcode, etc.
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +34,7 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 titleContentColor = MaterialTheme.colorScheme.primary,
             ),
-            title = { Text("Chat: $roomId") },
+            title = { Text(roomId) },
             navigationIcon = {
                     // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
                     // Passed navController.popBackStack() in WhisperNavHost
