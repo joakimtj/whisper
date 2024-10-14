@@ -27,7 +27,7 @@ fun WhisperNavHost() {
         }
         composable("createJoin") {
             Log.d("Navigation", "Navigating to CreateJoinScreen")
-            CreateJoinScreen(navController)
+            CreateJoinScreen(navController){navController.popBackStack()}
         }
     }
 }
