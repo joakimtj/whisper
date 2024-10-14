@@ -66,8 +66,8 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
                     if (code.isBlank())
                         return@Button // Exit function early
                     if (hasChatRoom(code))
-                        navController.navigate(code) // Just for now.
-                    navController.navigate("create")
+                        navController.navigate("chat/$code") // Not working.
+                    navController.navigate("create/$code")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

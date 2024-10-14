@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+// TODO: Display chat name instead of roomId in the top app bar.
 // Better to wait with Firebase until we've sorted out the other two in memory first
 // TODO: Set up Firebase so we can build out our data structures.
 // TODO: Separate incoming and outgoing messages into two columns.

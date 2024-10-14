@@ -38,7 +38,7 @@ fun WhisperNavHost() {
             Log.d("Navigation", "Navigating to JoinScreen")
             JoinScreen(navController){navController.popBackStack()}
         }
-        composable("create", arguments = listOf(navArgument("roomId") {type = NavType.StringType})) { backStackEntry ->
+        composable("create/{roomId}", arguments = listOf(navArgument("roomId") {type = NavType.StringType})) { backStackEntry ->
             val roomId = backStackEntry.arguments?.getString("roomId")
             Log.d("Navigation", "Navigating to CreateScreen")
             CreateScreen(

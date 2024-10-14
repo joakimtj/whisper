@@ -68,7 +68,7 @@ fun CreateScreen(roomId: String, navController: NavController, navigateBack: () 
                     if (expires.isBlank())
                         return@Button
                     createChatRoom(roomId, name, expires)
-                    // Then navigate to it
+                    navController.navigate("chat/$roomId")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

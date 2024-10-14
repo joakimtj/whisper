@@ -17,47 +17,41 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.whisper.DataStore.chatRooms
+import com.example.whisper.models.ChatRoom
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController) {
     val context = LocalContext.current
-    val chats = remember { mutableStateListOf(
-        "Chat 1" to "Expires in 2 hours",
-        "Chat 2" to "Expires in 1 day",
-        "Chat 3" to "Expires in 30 minutes"
-    ) }
+    val chats = remember { chatRooms }
 
     Scaffold(
-        /*
-        * https://developer.android.com/develop/ui/compose/components/app-bar
-        * App bar code is based on the above documentation.
-        * */
-        topBar = { CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = { Text("Whisper") },
-            // navigationIcon = { ... } Think this is reserved for navigate back stuff.
-            actions = {
-                IconButton(onClick = {
-                    Log.d("SettingsScreen",
-                        "Icon clicked. Attempting to navigate to SettingsScreen")
-                    try {
-                        navController.navigate("settings")
-                    } catch (e: Exception) {
-                        Log.e("MainScreen", "Navigation to Settings failed", e)
-                        Toast.makeText(context, "Navigation failed: ${e.message}", Toast.LENGTH_LONG).show()
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text("Whisper") },
+                actions = {
+                    IconButton(onClick = {
+                        Log.d("SettingsScreen", "Icon clicked. Attempting to navigate to SettingsScreen")
+                        try {
+                            navController.navigate("settings")
+                        } catch (e: Exception) {
+                            Log.e("MainScreen", "Navigation to Settings failed", e)
+                            Toast.makeText(context, "Navigation failed: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = "SettingsScreen icon"
+                        )
                     }
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = "SettingsScreen icon"
-                    )
                 }
-            }
-        ) },
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -74,14 +68,29 @@ fun MainScreen(navController: NavController) {
             }
         }
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            items(chats) { (chatName, expirationTime) ->
-                ChatListItem(chatName, expirationTime) {
-                    navController.navigate("chat/$chatName")
+        if (chats.isEmpty()) {
+            // Display a message when there are no chat rooms
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                Text(
+                    text = "No chat rooms available. Create or join a room to get started!",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                items(chats) { chatRoom ->
+                    ChatListItem(chatRoom) {
+                        navController.navigate("chat/${chatRoom.id}")
+                    }
                 }
             }
         }
@@ -89,7 +98,7 @@ fun MainScreen(navController: NavController) {
 }
 
 @Composable
-fun ChatListItem(chatName: String, expirationTime: String, onClick: () -> Unit) {
+fun ChatListItem(chatRoom: ChatRoom, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -97,9 +106,9 @@ fun ChatListItem(chatName: String, expirationTime: String, onClick: () -> Unit) 
             .clickable(onClick = onClick)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = chatName, style = MaterialTheme.typography.headlineSmall)
+            Text(text = chatRoom.name, style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = expirationTime, style = MaterialTheme.typography.bodyMedium)
+            Text(text = chatRoom.expires, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
