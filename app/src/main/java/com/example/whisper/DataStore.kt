@@ -5,9 +5,11 @@ import com.example.whisper.models.ChatRoom
 import com.example.whisper.models.Settings
 import com.example.whisper.models.User
 
+// TODO: Integrate with Firebase once most app functionality is finished.
+
 object DataStore {
-    var currentUser: User? = null
-    var settings: Settings = Settings()
+    var currentUser: User? = null // Not sure what this will be used for when...
+    var settings: Settings = Settings() // ...settings contains display name and trip
     val chatRooms: MutableList<ChatRoom> = mutableListOf()
 
     fun createChatRoom(roomId: String, name: String, expires: String) {
