@@ -3,7 +3,8 @@ package com.example.whisper.models
 data class ChatRoom(
     val id: String,
     val name: String,
-    val messages: MutableList<ChatMessage> = mutableListOf()
+    val messages: MutableList<ChatMessage> = mutableListOf(),
+    val expires: String
 )
 
 data class ChatMessage(

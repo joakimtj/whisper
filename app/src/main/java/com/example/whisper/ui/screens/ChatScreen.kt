@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+// Better to wait with Firebase until we've sorted out the other two in memory first
 // TODO: Set up Firebase so we can build out our data structures.
 // TODO: Separate incoming and outgoing messages into two columns.
 // TODO: Replace message var with class object containing display name, tripcode, etc.

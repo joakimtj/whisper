@@ -34,9 +34,19 @@ fun WhisperNavHost() {
             // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
             SettingsScreen(){navController.popBackStack()}
         }
-        composable("createJoin") {
-            Log.d("Navigation", "Navigating to CreateJoinScreen")
-            CreateJoinScreen(navController){navController.popBackStack()}
+        composable("join") {
+            Log.d("Navigation", "Navigating to JoinScreen")
+            JoinScreen(navController){navController.popBackStack()}
         }
+        composable("create", arguments = listOf(navArgument("roomId") {type = NavType.StringType})) { backStackEntry ->
+            val roomId = backStackEntry.arguments?.getString("roomId")
+            Log.d("Navigation", "Navigating to CreateScreen")
+            CreateScreen(
+                roomId = roomId ?: "",
+                navController = navController,
+                navigateBack = { navController.popBackStack() }
+            )
+        }
+
     }
 }

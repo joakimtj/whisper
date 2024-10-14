@@ -10,8 +10,17 @@ object DataStore {
     var settings: Settings = Settings()
     val chatRooms: MutableList<ChatRoom> = mutableListOf()
 
+    fun createChatRoom(roomId: String, name: String, expires: String) {
+        val newRoom = ChatRoom(roomId, name, expires = expires)
+        addChatRoom(newRoom)
+    }
+
     fun addChatRoom(room: ChatRoom) {
         chatRooms.add(room)
+    }
+
+    fun hasChatRoom(id: String): Boolean {
+        return chatRooms.any { it.id == id }
     }
 
     fun getChatRoom(id: String): ChatRoom? {

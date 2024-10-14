@@ -11,12 +11,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.whisper.DataStore.hasChatRoom
+
+/*
+*   For the alpha we will only check if a chatroom exists in memory
+*   When we implement Firebase ofc we will have to check against the backend
+*/
+
+// TODO: If a chatroom does not exist, navigate user to create screen to input name + expiration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateJoinScreen(navController: NavController, navigateBack: () -> Unit) {
+fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
     var code by remember { mutableStateOf("") }
-
+    var name by remember { mutableStateOf("") }
+    var expires by remember { mutableStateOf("") }
     Scaffold(
         topBar =
         {
@@ -54,13 +63,15 @@ fun CreateJoinScreen(navController: NavController, navigateBack: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    if (code.isNotBlank()) {
-                        navController.navigate("chat/$code")
-                    }
+                    if (code.isBlank())
+                        return@Button // Exit function early
+                    if (hasChatRoom(code))
+                        navController.navigate(code) // Just for now.
+                    navController.navigate("create")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Create or Join Chat")
+                Text("Create or Join")
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text("Or")
@@ -72,11 +83,12 @@ fun CreateJoinScreen(navController: NavController, navigateBack: () -> Unit) {
                 Text("Scan QR Code")
             }
         }
+
     }
 }
 
 @Preview
 @Composable
-fun CreateJoinScreenPreview() {
-    CreateJoinScreen(rememberNavController(), navigateBack = {})
+fun JoinScreenPreview() {
+    JoinScreen(rememberNavController(), navigateBack = {})
 }

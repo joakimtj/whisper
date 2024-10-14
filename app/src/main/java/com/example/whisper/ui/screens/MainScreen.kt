@@ -63,7 +63,7 @@ fun MainScreen(navController: NavController) {
                 onClick = {
                     Log.d("MainScreen", "FAB clicked. Attempting to navigate to createJoin")
                     try {
-                        navController.navigate("createJoin")
+                        navController.navigate("join")
                     } catch (e: Exception) {
                         Log.e("MainScreen", "Navigation failed", e)
                         Toast.makeText(context, "Navigation failed: ${e.message}", Toast.LENGTH_LONG).show()
