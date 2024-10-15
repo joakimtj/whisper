@@ -31,7 +31,7 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
     var message by remember { mutableStateOf("") }
     val messages = chatRoom.value?.messages ?: emptyList()
 
-    var forceUpdate by remember { mutableStateOf(0) }
+    var forceUpdate by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(forceUpdate) {
         chatRoom.value = getChatRoom(roomId)
@@ -146,8 +146,6 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                             isSentByUser = true
                         )
                         addMessageToChatRoom(roomId, newMessage)
-                        // Refresh the chatRoom state to trigger recomposition
-                        chatRoom.value = getChatRoom(roomId)
                         message = ""
                         Log.d("SendMessage", "Message sent. Total messages: ${chatRoom.value?.messages?.size}")
                     }
