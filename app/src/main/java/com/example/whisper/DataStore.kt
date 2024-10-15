@@ -31,7 +31,14 @@ object DataStore {
     }
 
     fun addMessageToChatRoom(roomId: String, message: ChatMessage) {
-        getChatRoom(roomId)?.messages?.add(message)
+        val room = getChatRoom(roomId)
+        if (room != null) {
+            room.messages.add(message)
+            updateChatRoom(room)
+            Log.d("DataStore", "Message added to ChatRoom. RoomID: $roomId, Total messages: ${room.messages.size}")
+        } else {
+            Log.e("DataStore", "Failed to add message. ChatRoom not found. RoomID: $roomId")
+        }
     }
 
     fun updateChatRoom(updatedRoom: ChatRoom) {

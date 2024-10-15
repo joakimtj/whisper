@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.whisper.DataStore.addMessageToChatRoom
 import com.example.whisper.DataStore.getChatRoom
 import com.example.whisper.DataStore.updateChatRoom
 import com.example.whisper.models.ChatMessage
@@ -29,7 +30,7 @@ import java.util.UUID
 fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
     val chatRoom = remember { mutableStateOf(getChatRoom(roomId)) }
     var message by remember { mutableStateOf("") }
-    val messages = remember { mutableStateOf(chatRoom.value?.messages ?: mutableListOf()) }
+    val messages = chatRoom.value?.messages ?: emptyList()
 
     Scaffold(
         topBar = {
@@ -58,13 +59,10 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                                 timestamp = System.currentTimeMillis(),
                                 isSentByUser = false
                             )
-                            chatRoom.value?.let { room ->
-                                room.messages.add(testMessage)
-                                // Update the room in DataStore
-                                updateChatRoom(room)
-                            }
-                            messages.value = messages.value.toMutableList().apply { add(testMessage) }
-                            Log.d("AddTestMessage", "Test message added successfully. Total messages: ${messages.value.size}")
+                            addMessageToChatRoom(roomId, testMessage)
+                            // Refresh the chatRoom state to trigger recomposition
+                            chatRoom.value = getChatRoom(roomId)
+                            Log.d("AddTestMessage", "Test message added. Total messages: ${chatRoom.value?.messages?.size}")
                         } catch (e: Exception) {
                             Log.e("AddTestMessage", "Adding test message failed.", e)
                         }
@@ -89,7 +87,7 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                items(messages.value) { msg ->
+                items(messages) { msg ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -141,14 +139,11 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                             timestamp = System.currentTimeMillis(),
                             isSentByUser = true
                         )
-                        chatRoom.value?.let { room ->
-                            room.messages.add(newMessage)
-                            // Update the room in DataStore
-                            updateChatRoom(room)
-                        }
-                        messages.value = messages.value.toMutableList().apply { add(newMessage) }
+                        addMessageToChatRoom(roomId, newMessage)
+                        // Refresh the chatRoom state to trigger recomposition
+                        chatRoom.value = getChatRoom(roomId)
                         message = ""
-                        Log.d("SendMessage", "Message sent. Total messages: ${messages.value.size}")
+                        Log.d("SendMessage", "Message sent. Total messages: ${chatRoom.value?.messages?.size}")
                     }
                 ) {
                     Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
