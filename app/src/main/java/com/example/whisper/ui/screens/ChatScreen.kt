@@ -27,6 +27,7 @@ import com.example.whisper.models.ChatMessage
 fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
     val chatRoom = getChatRoom(roomId)
     var message by remember { mutableStateOf("") }
+    // Will look into the SnapshotStateMap thing it mentions here at some point.
     val messages = remember { mutableStateOf(chatRoom?.messages?.toMutableList() ?: mutableListOf()) }
 
     Scaffold(
