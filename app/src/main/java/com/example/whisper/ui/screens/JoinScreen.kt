@@ -71,6 +71,10 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
                         Log.d("JoinButton", "Code is blank")
                         return@Button
                     }
+                    if (code.length != 4) {
+                        errorMessage = "Room code should be 4 digits in length."
+                        return@Button
+                    }
 
                     val roomExists = hasChatRoom(code)
                     Log.d("JoinButton", "Room exists: $roomExists for code: $code")

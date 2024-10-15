@@ -17,7 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.whisper.DataStore.getChatRoom
+import com.example.whisper.DataStore.updateChatRoom
 import com.example.whisper.models.ChatMessage
+import java.util.UUID
 
 // TODO: Use ChatRoom from DataStore for messages and misc data.
 // TODO: Separate incoming and outgoing messages into two columns.
@@ -25,10 +27,9 @@ import com.example.whisper.models.ChatMessage
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
-    val chatRoom = getChatRoom(roomId)
+    val chatRoom = remember { mutableStateOf(getChatRoom(roomId)) }
     var message by remember { mutableStateOf("") }
-    // Will look into the SnapshotStateMap thing it mentions here at some point.
-    val messages = remember { mutableStateOf(chatRoom?.messages?.toMutableList() ?: mutableListOf()) }
+    val messages = remember { mutableStateOf(chatRoom.value?.messages ?: mutableListOf()) }
 
     Scaffold(
         topBar = {
@@ -50,14 +51,25 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                     IconButton(onClick = {
                         Log.d("AddTestMessage", "Click AddTestMsg.")
                         try {
-                            messages.value = messages.value.toMutableList().apply {
-                                add(ChatMessage("1", "DEBUG", "TEST", System.currentTimeMillis(), false))
+                            val testMessage = ChatMessage(
+                                id = UUID.randomUUID().toString(),
+                                senderId = "DEBUG",
+                                content = "TEST",
+                                timestamp = System.currentTimeMillis(),
+                                isSentByUser = false
+                            )
+                            chatRoom.value?.let { room ->
+                                room.messages.add(testMessage)
+                                // Update the room in DataStore
+                                updateChatRoom(room)
                             }
+                            messages.value = messages.value.toMutableList().apply { add(testMessage) }
                             Log.d("AddTestMessage", "Test message added successfully. Total messages: ${messages.value.size}")
                         } catch (e: Exception) {
                             Log.e("AddTestMessage", "Adding test message failed.", e)
                         }
-                    }) {
+                    })
+                    {
                         Icon(
                             imageVector = Icons.Filled.Add,
                             contentDescription = "Add Test Message"
@@ -122,9 +134,19 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                 IconButton(
                     onClick = {
                         if (message.isBlank()) return@IconButton
-                        messages.value = messages.value.toMutableList().apply {
-                            add(ChatMessage("0", "TEMPORARY", message, System.currentTimeMillis(), true))
+                        val newMessage = ChatMessage(
+                            id = UUID.randomUUID().toString(),
+                            senderId = "TEMPORARY",
+                            content = message,
+                            timestamp = System.currentTimeMillis(),
+                            isSentByUser = true
+                        )
+                        chatRoom.value?.let { room ->
+                            room.messages.add(newMessage)
+                            // Update the room in DataStore
+                            updateChatRoom(room)
                         }
+                        messages.value = messages.value.toMutableList().apply { add(newMessage) }
                         message = ""
                         Log.d("SendMessage", "Message sent. Total messages: ${messages.value.size}")
                     }

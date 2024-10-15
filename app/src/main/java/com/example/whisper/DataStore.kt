@@ -1,5 +1,6 @@
 package com.example.whisper
 
+import android.util.Log
 import com.example.whisper.models.ChatMessage
 import com.example.whisper.models.ChatRoom
 import com.example.whisper.models.Settings
@@ -31,5 +32,18 @@ object DataStore {
 
     fun addMessageToChatRoom(roomId: String, message: ChatMessage) {
         getChatRoom(roomId)?.messages?.add(message)
+    }
+
+    fun updateChatRoom(updatedRoom: ChatRoom) {
+        val index = chatRooms.indexOfFirst { it.id == updatedRoom.id }
+        if (index != -1) {
+            // Update existing room
+            chatRooms[index] = updatedRoom
+            Log.d("DataStore", "ChatRoom updated. ID: ${updatedRoom.id}, Total messages: ${updatedRoom.messages.size}")
+        } else {
+            // Add new room
+            chatRooms.add(updatedRoom)
+            Log.d("DataStore", "New ChatRoom added. ID: ${updatedRoom.id}")
+        }
     }
 }
