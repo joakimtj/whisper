@@ -22,8 +22,7 @@ import com.example.whisper.DataStore.updateChatRoom
 import com.example.whisper.models.ChatMessage
 import java.util.UUID
 
-// TODO: Use ChatRoom from DataStore for messages and misc data.
-// TODO: Separate incoming and outgoing messages into two columns.
+// TODO: 'Style' messages to use display-name (if any)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +30,12 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
     val chatRoom = remember { mutableStateOf(getChatRoom(roomId)) }
     var message by remember { mutableStateOf("") }
     val messages = chatRoom.value?.messages ?: emptyList()
+
+    var forceUpdate by remember { mutableStateOf(0) }
+
+    LaunchedEffect(forceUpdate) {
+        chatRoom.value = getChatRoom(roomId)
+    }
 
     Scaffold(
         topBar = {
@@ -62,6 +67,7 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                             addMessageToChatRoom(roomId, testMessage)
                             // Refresh the chatRoom state to trigger recomposition
                             chatRoom.value = getChatRoom(roomId)
+                            forceUpdate++ // Hacky fix for recomposition not triggering despite above comment
                             Log.d("AddTestMessage", "Test message added. Total messages: ${chatRoom.value?.messages?.size}")
                         } catch (e: Exception) {
                             Log.e("AddTestMessage", "Adding test message failed.", e)

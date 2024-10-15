@@ -13,6 +13,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.whisper.DataStore.createChatRoom
 
+// TODO: Change expiration to be a drop-down with sets of values.
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateScreen(roomId: String, navController: NavController, navigateBack: () -> Unit) {
