@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.whisper.DataStore.getChatRoom
+import com.example.whisper.models.ChatMessage
 
 // TODO: Use ChatRoom from DataStore for messages and misc data.
 // TODO: Separate incoming and outgoing messages into two columns.
@@ -22,8 +24,9 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
+    val chatRoom = getChatRoom(roomId)
     var message by remember { mutableStateOf("") }
-    val messages = remember { mutableStateListOf<String>() }
+    val messages = remember { chatRoom?.messages ?: mutableListOf<ChatMessage>() }
 
     Scaffold(
         topBar =
@@ -62,15 +65,25 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
-                            .background(
-                                color = Color(0xFFE0E0E0), // Light gray background
-                                shape = RoundedCornerShape(4.dp)
-                            )
                     ) {
-                        Text(
-                            text = msg,
-                            modifier = Modifier.padding(10.dp)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .align(if (msg.isSentByUser) Alignment.CenterEnd else Alignment.CenterStart)
+                                .widthIn(max = 280.dp)
+                                .background(
+                                    color = if (msg.isSentByUser)
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    else
+                                        MaterialTheme.colorScheme.secondaryContainer,
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                        ) {
+                            Text(
+                                text = msg.content,
+                                modifier = Modifier.padding(12.dp),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
                     }
                 }
             }
@@ -87,10 +100,14 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                     placeholder = { Text("Type a message") }
                 )
                 IconButton(onClick = {
-                    if (message.isNotBlank()) {
-                        messages.add(message)
-                        message = ""
+                    if (message.isBlank()) {
+                        return@IconButton
                     }
+                    val newChatMessage = ChatMessage("0",
+                        "TEMPORARY", message,
+                        0, true)
+                    messages.add(newChatMessage)
+                    message = ""
                 }) {
                     Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
                 }

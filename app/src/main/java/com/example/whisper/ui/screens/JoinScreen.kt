@@ -25,9 +25,8 @@ import com.example.whisper.DataStore.hasChatRoom
 @Composable
 fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
     var code by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var expires by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
     Scaffold(
         topBar =
         {

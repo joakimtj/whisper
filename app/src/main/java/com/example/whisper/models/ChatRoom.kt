@@ -11,5 +11,6 @@ data class ChatMessage(
     val id: String,
     val senderId: String,
     val content: String,
-    val timestamp: Long
+    val timestamp: Long,
+    val isSentByUser: Boolean
 )
