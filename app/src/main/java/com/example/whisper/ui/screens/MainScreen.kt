@@ -113,7 +113,7 @@ fun ChatListItem(chatRoom: ChatRoom, onClick: () -> Unit) {
         ) {
             Text(text = chatRoom.name, style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = formatTimestampDate(chatRoom.expires.toEpochMilli()), style = MaterialTheme.typography.bodyMedium)
+            Text(text = "Expires on ${formatTimestampDate(chatRoom.expires.toEpochMilli())}", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
