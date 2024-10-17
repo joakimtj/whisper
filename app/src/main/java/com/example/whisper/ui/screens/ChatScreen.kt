@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.whisper.DataStore.addMessageToChatRoom
 import com.example.whisper.DataStore.getChatRoom
-import com.example.whisper.DataStore.updateChatRoom
 import com.example.whisper.models.ChatMessage
 import java.util.UUID
 

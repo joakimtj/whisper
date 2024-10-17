@@ -1,5 +1,8 @@
 package com.example.whisper.ui.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -15,11 +18,19 @@ import com.example.whisper.DataStore.createChatRoom
 
 // TODO: Change expiration to be a drop-down with sets of values.
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateScreen(roomId: String, navController: NavController, navigateBack: () -> Unit) {
     var name by remember { mutableStateOf("") }
-    var expires by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+    var selectedExpirationOption by remember { mutableStateOf<ExpirationOption?>(null) }
+
+    val expirationOptions = listOf(
+        ExpirationOption("24 hours", 24 * 60 * 60),
+        ExpirationOption("7 days", 7 * 24 * 60 * 60),
+        ExpirationOption("30 days", 30 * 24 * 60 * 60)
+    )
     Scaffold(
         topBar =
         {
@@ -55,21 +66,46 @@ fun CreateScreen(roomId: String, navController: NavController, navigateBack: () 
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = expires,
-                onValueChange = { expires = it },
-                label = { Text("Enter expiration") },
-                modifier = Modifier.fillMaxWidth()
-            )
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+            ) {
+                TextField(
+                    value = selectedExpirationOption?.label ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Select expiration") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    expirationOptions.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option.label) },
+                            onClick = {
+                                selectedExpirationOption = option
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
-                    if (name.isBlank())
-                        return@Button
-                    if (expires.isBlank())
-                        return@Button
-                    createChatRoom(roomId, name, expires)
+                    if (name.isBlank() || selectedExpirationOption == null) return@Button
+                    createChatRoom(roomId, name, selectedExpirationOption!!.seconds)
                     navController.navigate("chat/$roomId")
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -77,12 +113,14 @@ fun CreateScreen(roomId: String, navController: NavController, navigateBack: () 
                 Text("Submit")
             }
         }
-
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun CreateScreenPreview() {
     CreateScreen("", rememberNavController(), navigateBack = {})
 }
+
+data class ExpirationOption(val label: String, val seconds: Long)

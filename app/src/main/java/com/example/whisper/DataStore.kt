@@ -1,10 +1,13 @@
 package com.example.whisper
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.example.whisper.models.ChatMessage
 import com.example.whisper.models.ChatRoom
 import com.example.whisper.models.Settings
 import com.example.whisper.models.User
+import java.time.Instant
 
 // TODO: Integrate with Firebase once most app functionality is finished.
 
@@ -13,8 +16,10 @@ object DataStore {
     var settings: Settings = Settings() // ...settings contains display name and trip
     val chatRooms: MutableList<ChatRoom> = mutableListOf()
 
-    fun createChatRoom(roomId: String, name: String, expires: String) {
-        val newRoom = ChatRoom(roomId, name, expires = expires)
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun createChatRoom(roomId: String, name: String, expires: Long) {
+        val expirationInstant = Instant.now().plusSeconds(expires)
+        val newRoom = ChatRoom(roomId, name, expires = expirationInstant)
         addChatRoom(newRoom)
     }
 
