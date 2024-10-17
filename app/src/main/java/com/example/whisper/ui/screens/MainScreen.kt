@@ -20,7 +20,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.whisper.DataStore.chatRooms
 import com.example.whisper.models.ChatRoom
 import com.example.whisper.models.ChatRoomUtils.formatTimestampDate
-import com.example.whisper.models.ChatRoomUtils.formatTimestampHr
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,7 +112,7 @@ fun ChatListItem(chatRoom: ChatRoom, onClick: () -> Unit) {
         ) {
             Text(text = chatRoom.name, style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = formatTimestampDate(chatRoom.expires.toEpochMilli()), style = MaterialTheme.typography.bodyMedium)
+            Text(text = "Expires on ${formatTimestampDate(chatRoom.expires.toEpochMilli())}", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
