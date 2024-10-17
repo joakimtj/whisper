@@ -15,17 +15,15 @@ data class ChatRoom(
 
 // Helper functions for working with expiration
 object ChatRoomUtils {
-    @RequiresApi(Build.VERSION_CODES.O)
+
     fun isExpired(chatRoom: ChatRoom): Boolean {
         return Instant.now().isAfter(chatRoom.expires)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun setExpirationDays(days: Long): Instant {
         return Instant.now().plusSeconds(days * 24 * 60 * 60)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun formatExpiration(expires: Instant): String {
         val localDateTime = LocalDateTime.ofInstant(expires, ZoneId.systemDefault())
         return localDateTime.toString()

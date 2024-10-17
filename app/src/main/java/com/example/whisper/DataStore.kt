@@ -16,7 +16,6 @@ object DataStore {
     var settings: Settings = Settings() // ...settings contains display name and trip
     val chatRooms: MutableList<ChatRoom> = mutableListOf()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun createChatRoom(roomId: String, name: String, expires: Long) {
         val expirationInstant = Instant.now().plusSeconds(expires)
         val newRoom = ChatRoom(roomId, name, expires = expirationInstant)

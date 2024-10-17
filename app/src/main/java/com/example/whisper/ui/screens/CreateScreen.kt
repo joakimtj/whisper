@@ -2,7 +2,6 @@ package com.example.whisper.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -18,7 +17,6 @@ import com.example.whisper.DataStore.createChatRoom
 
 // TODO: Change expiration to be a drop-down with sets of values.
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateScreen(roomId: String, navController: NavController, navigateBack: () -> Unit) {
@@ -116,7 +114,6 @@ fun CreateScreen(roomId: String, navController: NavController, navigateBack: () 
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun CreateScreenPreview() {
