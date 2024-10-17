@@ -1,6 +1,7 @@
 package com.example.whisper.ui.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -8,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -55,6 +57,7 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val context = LocalContext.current
             TextField(
                 value = code,
                 onValueChange = { code = it },
@@ -69,10 +72,12 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
                     if (code.isBlank()) {
                         errorMessage = "Please enter a room code"
                         Log.d("JoinButton", "Code is blank")
+                        Toast.makeText(context, "Please enter a room code.", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
                     if (code.length != 4) {
                         errorMessage = "Room code should be 4 digits in length."
+                        Toast.makeText(context, "Room should be 4 digits in length.", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
 
@@ -106,7 +111,10 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
             Text("Or")
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { /* Implement QR code scanning */ },
+                onClick = {
+                    Toast.makeText(context, "These things - they take time.",
+                        Toast.LENGTH_SHORT).show()
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Scan QR Code")

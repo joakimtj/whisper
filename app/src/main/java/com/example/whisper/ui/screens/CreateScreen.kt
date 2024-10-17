@@ -25,6 +25,7 @@ fun CreateScreen(roomId: String, navController: NavController, navigateBack: () 
     var selectedExpirationOption by remember { mutableStateOf<ExpirationOption?>(null) }
 
     val expirationOptions = listOf(
+        ExpirationOption("60 seconds", 60),
         ExpirationOption("24 hours", 24 * 60 * 60),
         ExpirationOption("7 days", 7 * 24 * 60 * 60),
         ExpirationOption("30 days", 30 * 24 * 60 * 60)
@@ -102,7 +103,10 @@ fun CreateScreen(roomId: String, navController: NavController, navigateBack: () 
 
             Button(
                 onClick = {
-                    if (name.isBlank() || selectedExpirationOption == null) return@Button
+                    if (name.isBlank() || selectedExpirationOption == null)
+                    {
+                        return@Button
+                    }
                     createChatRoom(roomId, name, selectedExpirationOption!!.seconds)
                     navController.navigate("chat/$roomId")
                 },

@@ -14,11 +14,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.whisper.DataStore.addMessageToChatRoom
 import com.example.whisper.DataStore.getChatRoom
 import com.example.whisper.models.ChatMessage
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 // TODO: 'Style' messages to use display-name (if any)
@@ -93,33 +98,7 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                     .fillMaxWidth()
             ) {
                 items(messages) { msg ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .align(if (msg.isSentByUser) Alignment.CenterEnd else Alignment.CenterStart)
-                                .widthIn(max = 280.dp)
-                                .background(
-                                    color = if (msg.isSentByUser)
-                                        MaterialTheme.colorScheme.primaryContainer
-                                    else
-                                        MaterialTheme.colorScheme.secondaryContainer,
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                        ) {
-                            Text(
-                                text = msg.content,
-                                modifier = Modifier.padding(12.dp),
-                                color = if (msg.isSentByUser)
-                                    MaterialTheme.colorScheme.onPrimaryContainer
-                                else
-                                    MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                        }
-                    }
+                    MessageItem(msg)
                 }
             }
             Row(
@@ -131,7 +110,9 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                 TextField(
                     value = message,
                     onValueChange = { message = it },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
                     placeholder = { Text("Type a message") }
                 )
                 IconButton(
@@ -146,6 +127,7 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                         )
                         addMessageToChatRoom(roomId, newMessage)
                         message = ""
+                        forceUpdate++
                         Log.d("SendMessage", "Message sent. Total messages: ${chatRoom.value?.messages?.size}")
                     }
                 ) {
@@ -154,6 +136,54 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
             }
         }
     }
+}
+
+@Composable
+fun MessageItem(msg: ChatMessage) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .align(if (msg.isSentByUser) Alignment.CenterEnd else Alignment.CenterStart)
+                .widthIn(max = 280.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = if (msg.isSentByUser)
+                            MaterialTheme.colorScheme.primaryContainer
+                        else
+                            MaterialTheme.colorScheme.secondaryContainer,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+            ) {
+                Text(
+                    text = msg.content,
+                    modifier = Modifier.padding(12.dp),
+                    color = if (msg.isSentByUser)
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    else
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+            Text(
+                text = formatTimestamp(msg.timestamp),
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp),
+                fontSize = 12.sp,
+                fontStyle = FontStyle.Italic,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+fun formatTimestamp(timestamp: Long): String {
+    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+    val date = Date(timestamp)
+    return sdf.format(date)
 }
 
 @Preview

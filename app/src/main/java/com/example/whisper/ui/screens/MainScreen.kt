@@ -23,6 +23,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.whisper.DataStore.chatRooms
 import com.example.whisper.models.ChatRoom
+import com.example.whisper.models.ChatRoomUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,8 +93,8 @@ fun MainScreen(navController: NavController) {
                     .padding(padding)
             ) {
                 items(chats) { chatRoom ->
-                    ChatListItem(chatRoom) {
-                        navController.navigate("chat/${chatRoom.id}")
+                        ChatListItem(chatRoom) {
+                            navController.navigate("chat/${chatRoom.id}")
                     }
                 }
             }
