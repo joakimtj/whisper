@@ -20,7 +20,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.whisper.DataStore.chatRooms
 import com.example.whisper.models.ChatRoom
 import com.example.whisper.models.ChatRoomUtils.formatTimestampDate
-import com.example.whisper.models.ChatRoomUtils.formatTimestampHr
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
