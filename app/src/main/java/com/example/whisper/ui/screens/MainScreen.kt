@@ -2,20 +2,16 @@ package com.example.whisper.ui.screens
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,7 +19,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.whisper.DataStore.chatRooms
 import com.example.whisper.models.ChatRoom
-import com.example.whisper.models.ChatRoomUtils
+import com.example.whisper.models.ChatRoomUtils.formatTimestampDate
+import com.example.whisper.models.ChatRoomUtils.formatTimestampHr
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -116,7 +113,7 @@ fun ChatListItem(chatRoom: ChatRoom, onClick: () -> Unit) {
         ) {
             Text(text = chatRoom.name, style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = chatRoom.expires.toString(), style = MaterialTheme.typography.bodyMedium)
+            Text(text = formatTimestampDate(chatRoom.expires.toEpochMilli()), style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

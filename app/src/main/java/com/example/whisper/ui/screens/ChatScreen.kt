@@ -21,9 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.example.whisper.DataStore.addMessageToChatRoom
 import com.example.whisper.DataStore.getChatRoom
 import com.example.whisper.models.ChatMessage
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.example.whisper.models.ChatRoomUtils.formatTimestampHr
 import java.util.UUID
 
 // TODO: 'Style' messages to use display-name (if any)
@@ -170,7 +168,7 @@ fun MessageItem(msg: ChatMessage) {
                 )
             }
             Text(
-                text = formatTimestamp(msg.timestamp),
+                text = formatTimestampHr(msg.timestamp),
                 modifier = Modifier.padding(start = 4.dp, top = 2.dp),
                 fontSize = 12.sp,
                 fontStyle = FontStyle.Italic,
@@ -178,12 +176,6 @@ fun MessageItem(msg: ChatMessage) {
             )
         }
     }
-}
-
-fun formatTimestamp(timestamp: Long): String {
-    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-    val date = Date(timestamp)
-    return sdf.format(date)
 }
 
 @Preview

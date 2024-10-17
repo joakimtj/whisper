@@ -1,10 +1,11 @@
 package com.example.whisper.models
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.Date
+import java.util.Locale
 
 data class ChatRoom(
     val id: String,
@@ -28,6 +29,18 @@ object ChatRoomUtils {
         val localDateTime = LocalDateTime.ofInstant(expires, ZoneId.systemDefault())
         return localDateTime.toString()
     }
+
+    fun formatTimestampHr(timestamp: Long): String {
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val date = Date(timestamp)
+        return sdf.format(date)
+    }
+    fun formatTimestampDate(timestamp: Long): String {
+        val sdf = SimpleDateFormat("dd.MM.yyyy 'at' HH:mm", Locale.getDefault())
+        val date = Date(timestamp)
+        return sdf.format(date)
+    }
+
 }
 
 data class ChatMessage(
