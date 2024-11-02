@@ -1,0 +1,117 @@
+package com.example.whisper.ui.screens
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.ui.dialogs.DateTimePickerDialog
+import com.example.whisper.viewmodel.MainViewModel
+import com.example.whisper.utils.formatDateTime
+
+// TODO: Change expiration to be a drop-down with sets of values.
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreateScreen(viewModel: MainViewModel = viewModel(), roomId: String, navigateBack: () -> Unit) {
+    var name by remember { mutableStateOf("") }
+
+    var showDateTimePicker by remember { mutableStateOf(false)}
+    var expirationDateTime by remember { mutableStateOf<Long?>(null) }
+
+    if (showDateTimePicker) {
+        DateTimePickerDialog(
+            onDateTimeSelected = {
+                expirationDateTime = it
+                showDateTimePicker = false
+            },
+            onDismiss = { showDateTimePicker = false }
+        )
+    }
+    Scaffold(
+        topBar =
+        {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text("Select name and expiration") },
+                navigationIcon = {
+                    // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
+                    // Passed navController.popBackStack() in WhisperNavHost
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Navigate back from Create/Join."
+                        )
+                    }
+                } )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Enter name") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (expirationDateTime != null) {
+                        "Expires: ${formatDateTime(expirationDateTime!!)}"
+                    } else {
+                        "Select expiration date and time"
+                    }
+                )
+                TextButton(onClick = { showDateTimePicker = true }) {
+                    Text(if (expirationDateTime == null) "Select" else "Change")
+                }
+            }
+
+            Button(
+                onClick = {
+                    if (name.isBlank())
+                    {
+                        return@Button
+                    }
+                    viewModel.createRoom(
+                        name = name,
+                        expiresAt = expirationDateTime as Long,
+                        onSuccess = { navigateBack.invoke()
+                        },
+                        // Yup! Passing in nothing. :)
+                        onError = {}
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Submit")
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun CreateScreenPreview() {
+    CreateScreen(viewModel(), "", navigateBack = {})
+}
+
+data class ExpirationOption(val label: String, val seconds: Long)

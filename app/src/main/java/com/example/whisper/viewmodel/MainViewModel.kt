@@ -1,11 +1,12 @@
-package com.example.whisper
+package com.example.whisper.viewmodel
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.whisper.data.local.DataStoreManager
+import com.example.whisper.data.model.RoomData
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import java.util.Date

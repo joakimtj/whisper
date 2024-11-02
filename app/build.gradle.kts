@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation (libs.androidx.datastore.preferences)
     implementation (libs.kotlinx.serialization.json)
+    implementation(libs.firebase.firestore.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

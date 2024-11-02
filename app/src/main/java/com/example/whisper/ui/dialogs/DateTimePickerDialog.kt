@@ -1,4 +1,4 @@
-package com.example.whisper
+package com.example.whisper.ui.dialogs
 
 // DateTimePickerDialog.kt
 import androidx.compose.material3.*

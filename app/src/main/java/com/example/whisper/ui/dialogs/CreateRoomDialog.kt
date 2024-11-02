@@ -1,4 +1,4 @@
-package com.example.whisper
+package com.example.whisper.ui.dialogs
 
 // CreateRoomDialog.kt
 import androidx.compose.foundation.layout.*
@@ -7,8 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.whisper.utils.formatDateTime
 
 @Composable
 fun CreateRoomDialog(

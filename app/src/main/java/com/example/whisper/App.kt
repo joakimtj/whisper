@@ -2,11 +2,8 @@ package com.example.whisper
 
 // App.kt
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,13 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import java.text.SimpleDateFormat
-import java.util.*
 
-import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.layout.padding
+import com.example.whisper.data.model.RoomData
+import com.example.whisper.ui.dialogs.CreateRoomDialog
+import com.example.whisper.ui.screens.ChatScreen
+import com.example.whisper.ui.screens.JoinScreen
+import com.example.whisper.viewmodel.MainViewModel
 
 
 // App.kt
@@ -31,6 +29,7 @@ fun App(viewModel: MainViewModel = viewModel()) {
     var showJoinDialog by remember { mutableStateOf(false) }
     var showCreateDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var joinScreen by remember { mutableStateOf(false) }
 
     if (currentRoom != null) {
         ChatScreen(
@@ -38,10 +37,16 @@ fun App(viewModel: MainViewModel = viewModel()) {
             roomName = currentRoom!!.name,
             onNavigateUp = { currentRoom = null }
         )
-    } else {
+    } else if (joinScreen) {
+        JoinScreen(viewModel, navigateBack = {joinScreen = false})
+    }
+    else {
         Scaffold(
             topBar = {
-                TopAppBar(
+                CenterAlignedTopAppBar(
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.primary),
                     title = { Text("Chat Rooms") },
                     actions = {
                         IconButton(onClick = { showJoinDialog = true }) {
@@ -52,6 +57,15 @@ fun App(viewModel: MainViewModel = viewModel()) {
                         }
                     }
                 )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        joinScreen = true;
+                    }
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Create or Join Chat")
+                }
             }
         ) { padding ->
             Box(

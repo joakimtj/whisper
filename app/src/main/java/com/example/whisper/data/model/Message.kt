@@ -1,4 +1,4 @@
-package com.example.whisper
+package com.example.whisper.data.model
 
 data class Message(
     val id: String = "",

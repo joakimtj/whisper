@@ -1,4 +1,4 @@
-package com.example.whisper
+package com.example.whisper.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,8 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.whisper.viewmodel.ChatViewModel
+import com.example.whisper.data.model.Message
+import com.example.whisper.utils.formatTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +34,11 @@ fun ChatScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
                 title = { Text(roomName) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {

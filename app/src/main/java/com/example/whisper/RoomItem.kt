@@ -9,7 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
+import com.example.whisper.data.model.RoomData
+import com.example.whisper.utils.formatDateTime
 
 
 // RoomItem.kt - Updated to include Leave button

@@ -1,4 +1,4 @@
-package com.example.whisper
+package com.example.whisper.utils
 
 import java.text.SimpleDateFormat
 import java.util.Date
