@@ -14,10 +14,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.filled.Settings
 import com.example.whisper.data.model.RoomData
 import com.example.whisper.ui.dialogs.CreateRoomDialog
 import com.example.whisper.ui.screens.ChatScreen
 import com.example.whisper.ui.screens.JoinScreen
+import com.example.whisper.ui.screens.SettingsScreen
 import com.example.whisper.viewmodel.MainViewModel
 
 
@@ -30,6 +32,7 @@ fun App(viewModel: MainViewModel = viewModel()) {
     var showCreateDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var joinScreen by remember { mutableStateOf(false) }
+    var settingsScreen by remember { mutableStateOf(false)}
 
     if (currentRoom != null) {
         ChatScreen(
@@ -38,7 +41,14 @@ fun App(viewModel: MainViewModel = viewModel()) {
             onNavigateUp = { currentRoom = null }
         )
     } else if (joinScreen) {
-        JoinScreen(viewModel, navigateBack = {joinScreen = false})
+        JoinScreen(
+            viewModel,
+            navigateBack = {joinScreen = false}
+        )
+    } else if (settingsScreen) {
+        SettingsScreen(
+            navigateBack = {settingsScreen = false}
+        )
     }
     else {
         Scaffold(
@@ -54,6 +64,9 @@ fun App(viewModel: MainViewModel = viewModel()) {
                         }
                         IconButton(onClick = { showCreateDialog = true }) {
                             Icon(Icons.Default.Create, "Create Room")
+                        }
+                        IconButton(onClick = { settingsScreen = true }) {
+                            Icon(Icons.Default.Settings, "Edit settings")
                         }
                     }
                 )
