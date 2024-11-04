@@ -42,6 +42,7 @@ class MainViewModel(
     fun createRoom(
         name: String,
         expiresAt: Long,
+        public: Boolean = false,
         onSuccess: (String) -> Unit,
         onError: (String) -> Unit
     ) {
@@ -52,7 +53,8 @@ class MainViewModel(
             "code" to code,
             "createdAt" to now,
             "expiresAt" to Timestamp(Date(expiresAt)),
-            "lastActivity" to now
+            "lastActivity" to now,
+            "public" to public
         )
 
         db.collection("rooms")
@@ -64,7 +66,8 @@ class MainViewModel(
                     code = code,
                     createdAt = now.toDate().time,
                     expiresAt = expiresAt,
-                    lastActivity = now.toDate().time
+                    lastActivity = now.toDate().time,
+                    public = public
                 )
                 _joinedRooms.add(newRoom)
                 saveRoom(newRoom)
@@ -72,6 +75,80 @@ class MainViewModel(
             }
             .addOnFailureListener {
                 onError("Failed to create room: ${it.message}")
+            }
+    }
+
+    fun joinRandomRoom(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        val currentTime = System.currentTimeMillis()
+
+        db.collection("rooms")
+            .whereEqualTo("public", true)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    onError("No available public rooms found")
+                    return@addOnSuccessListener
+                }
+
+                // Get random room from available rooms
+                val randomIndex = (0 until documents.size()).random()
+                val document = documents.documents[randomIndex]
+
+                try {
+                    // Safely get timestamps with null checks
+                    val room = RoomData(
+                        id = document.id,
+                        name = document.getString("name")
+                            ?: throw IllegalStateException("Room name is required"),
+                        code = document.getString("code")
+                            ?: throw IllegalStateException("Room code is required"),
+                        createdAt = document.getTimestamp("createdAt")?.toDate()?.time
+                            ?: currentTime,
+                        expiresAt = document.getTimestamp("expiresAt")?.toDate()?.time
+                            ?: throw IllegalStateException("Expiration time is required"),
+                        lastActivity = document.getTimestamp("lastActivity")?.toDate()?.time
+                            ?: currentTime,
+                        public = document.getBoolean("public") ?: true
+                    )
+
+                    // Check if room is already joined
+                    if (_joinedRooms.any { it.id == room.id }) {
+                        onError("You're already in this room")
+                        return@addOnSuccessListener
+                    }
+
+                    // Check room capacity if needed
+                    document.getLong("memberCount")?.let { currentCount ->
+                        val maxMembers = document.getLong("maxMembers") ?: 50
+                        if (currentCount >= maxMembers) {
+                            onError("Room is full")
+                            return@addOnSuccessListener
+                        }
+                    }
+
+                    // Update member count atomically
+                    val roomRef = db.collection("rooms").document(room.id)
+                    db.runTransaction { transaction ->
+                        val snapshot = transaction.get(roomRef)
+                        val currentCount = snapshot.getLong("memberCount") ?: 0
+                        transaction.update(roomRef, "memberCount", currentCount + 1)
+                    }.addOnSuccessListener {
+                        // Add room to joined rooms and save locally
+                        _joinedRooms.add(room)
+                        saveRoom(room)
+                        onSuccess()
+                    }.addOnFailureListener { e ->
+                        onError("Failed to join room: ${e.message}")
+                    }
+
+                } catch (e: IllegalStateException) {
+                    onError("Invalid room data: ${e.message}")
+                } catch (e: Exception) {
+                    onError("Unexpected error: ${e.message}")
+                }
+            }
+            .addOnFailureListener { e ->
+                onError("Failed to fetch rooms: ${e.message}")
             }
     }
 

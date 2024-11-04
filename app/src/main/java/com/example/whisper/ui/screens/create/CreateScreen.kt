@@ -21,6 +21,7 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
     val context = LocalContext.current
 
     var name by remember { mutableStateOf("") }
+    var checked by remember { mutableStateOf(false) }
 
     var showDateTimePicker by remember { mutableStateOf(false)}
     var expirationDateTime by remember { mutableStateOf<Long?>(null) }
@@ -70,6 +71,23 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Make room public"
+                )
+
+                Checkbox(
+                    checked = checked,
+                    onCheckedChange = { checked = it}
+                )
+
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -101,6 +119,7 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
                     viewModel.createRoom(
                         name = name,
                         expiresAt = expirationDateTime as Long,
+                        public = checked,
                         onSuccess = { onNavigateUp.invoke()
                         },
                         // Yup! Passing in nothing. :)

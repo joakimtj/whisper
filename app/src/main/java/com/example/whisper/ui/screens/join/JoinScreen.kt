@@ -92,6 +92,23 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
             ) {
                 Text("Scan QR Code")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Feeling silly? Join a random, public room!")
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    viewModel.joinRandomRoom(
+                        onSuccess = { onNavigateUp() },
+                        onError = {
+                            errorMessage ->
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Spin the wheel!")
+            }
         }
 
     }

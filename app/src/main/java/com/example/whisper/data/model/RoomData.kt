@@ -6,5 +6,6 @@ data class RoomData (
     val code: String = "",
     val createdAt: Long = 0,
     val expiresAt: Long = 0,
-    val lastActivity: Long = 0
+    val lastActivity: Long = 0,
+    val public: Boolean = false
 )
