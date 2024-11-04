@@ -8,15 +8,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.whisper.data.local.DataStoreManager
-import com.example.whisper.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    navigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
     dataStoreManager: DataStoreManager
 ) {
     var displayName by remember { mutableStateOf("") }
@@ -51,7 +49,7 @@ fun SettingsScreen(
                 ),
                 title = { Text("Settings") },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = onNavigateUp) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Navigate back"

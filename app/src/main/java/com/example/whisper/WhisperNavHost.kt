@@ -68,7 +68,7 @@ fun WhisperNavHost(
 
         composable(Screen.Settings.route) {
             SettingsScreen(
-                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.popBackStack() },
                 dataStoreManager
             )
         }
