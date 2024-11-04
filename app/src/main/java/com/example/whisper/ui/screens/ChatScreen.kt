@@ -143,12 +143,28 @@ fun MessageItem(message: Message) {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                // TODO: Append tripcode in a better way?
-                text = message.senderName + " " + message.tripcode,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Column(
+            ) {
+                Row() {
+                    Text(
+                        text = message.senderName,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    // Tripcode is never null because...
+                    // ... get tripcode func returns "" when null
+                    // TODO: Change tripcode type in Message obj to just string then remove cond
+                    if (message.tripcode != null) {
+                        Text(
+                            text = " " + message.tripcode,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                }
+            }
+
+
             Text(
                 text = formatTime(message.timestamp),
                 style = MaterialTheme.typography.bodySmall,
