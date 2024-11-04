@@ -27,12 +27,14 @@ import com.example.whisper.viewmodel.MainViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(viewModel: MainViewModel = viewModel()) {
+    // Navigation lol
     var currentRoom by remember { mutableStateOf<RoomData?>(null) }
+    var joinScreen by remember { mutableStateOf(false) }
+    var settingsScreen by remember { mutableStateOf(false)}
+    // Dialogs
     var showJoinDialog by remember { mutableStateOf(false) }
     var showCreateDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var joinScreen by remember { mutableStateOf(false) }
-    var settingsScreen by remember { mutableStateOf(false)}
 
     if (currentRoom != null) {
         ChatScreen(
