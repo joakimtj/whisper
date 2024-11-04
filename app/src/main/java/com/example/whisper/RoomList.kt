@@ -1,6 +1,7 @@
 package com.example.whisper
 
 // RoomsList.kt
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.whisper.data.model.RoomData
+import com.example.whisper.utils.getCurrentTime
 
 @Composable
 fun RoomList(
@@ -23,11 +25,17 @@ fun RoomList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(rooms) { room ->
-            RoomItem(
-                room = room,
-                onLeave = onLeaveRoom,
-                onClick = onRoomClick
-            )
+            if (room.expiresAt > getCurrentTime()) {
+                RoomItem(
+                    room = room,
+                    onLeave = onLeaveRoom,
+                    onClick = onRoomClick
+                )
+            }
+            else {
+                onLeaveRoom(room.id)
+                Log.d("Room Expired", "Room expired. Leaving room.")
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import java.time.*
 
 // Don't bother editing this component. It blows up no matter what you do. Fucking piece of shit.
+// Fuck this piece of shit garbage component
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

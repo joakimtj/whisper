@@ -89,6 +89,10 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
                     {
                         return@Button
                     }
+                    if (expirationDateTime == null)
+                    {
+                        return@Button
+                    }
                     viewModel.createRoom(
                         name = name,
                         expiresAt = expirationDateTime as Long,
