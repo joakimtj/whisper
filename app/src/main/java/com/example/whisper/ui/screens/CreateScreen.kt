@@ -14,8 +14,6 @@ import com.example.whisper.ui.dialogs.DateTimePickerDialog
 import com.example.whisper.viewmodel.MainViewModel
 import com.example.whisper.utils.formatDateTime
 
-// TODO: Change expiration to be a drop-down with sets of values.
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateScreen(viewModel: MainViewModel = viewModel(), roomId: String, navigateBack: () -> Unit) {

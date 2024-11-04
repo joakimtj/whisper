@@ -47,7 +47,8 @@ fun App(viewModel: MainViewModel = viewModel()) {
         )
     } else if (settingsScreen) {
         SettingsScreen(
-            navigateBack = {settingsScreen = false}
+            navigateBack = {settingsScreen = false},
+            mainViewModel = viewModel
         )
     }
     else {

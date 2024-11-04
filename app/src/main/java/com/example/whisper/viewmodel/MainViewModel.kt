@@ -14,7 +14,7 @@ import java.util.Date
 
 // MainViewModel.kt
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    private val dataStoreManager = DataStoreManager(application)
+    val dataStoreManager = DataStoreManager(application)
     private val _joinedRooms = mutableStateListOf<RoomData>()
     val joinedRooms: List<RoomData> = _joinedRooms
 

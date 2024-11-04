@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.whisper.viewmodel.ChatViewModel
+import com.example.whisper.viewmodel.MainViewModel
 import com.example.whisper.data.model.Message
 import com.example.whisper.utils.formatTime
 
@@ -22,11 +23,18 @@ fun ChatScreen(
     roomId: String,
     roomName: String,
     onNavigateUp: () -> Unit,
-    viewModel: ChatViewModel = viewModel()
+    viewModel: ChatViewModel = viewModel(),
+    mainViewModel: MainViewModel = viewModel()
 ) {
     var messageText by remember { mutableStateOf("") }
     var senderName by remember { mutableStateOf("") }
-    var showNameDialog by remember { mutableStateOf(true) }
+
+    // Load the username from MainViewModel
+    LaunchedEffect(Unit) {
+        mainViewModel.dataStoreManager.getUserName().collect { name ->
+            senderName = name
+        }
+    }
 
     LaunchedEffect(roomId) {
         viewModel.setRoom(roomId, roomName)
@@ -42,7 +50,7 @@ fun ChatScreen(
                 title = { Text(roomName) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -71,30 +79,6 @@ fun ChatScreen(
             )
         }
     }
-
-    if (showNameDialog) {
-        AlertDialog(
-            onDismissRequest = { },
-            title = { Text("Enter your name") },
-            text = {
-                TextField(
-                    value = senderName,
-                    onValueChange = { senderName = it },
-                    label = { Text("Name") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { showNameDialog = false },
-                    enabled = senderName.isNotBlank()
-                ) {
-                    Text("Start Chatting")
-                }
-            }
-        )
-    }
 }
 
 @Composable
@@ -122,7 +106,7 @@ fun ChatInput(
             onClick = onSendMessage,
             enabled = messageText.isNotBlank()
         ) {
-            Icon(Icons.Default.Send, contentDescription = "Send")
+            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
         }
     }
 }

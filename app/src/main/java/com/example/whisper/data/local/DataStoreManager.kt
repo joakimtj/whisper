@@ -10,19 +10,39 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.whisper.data.model.RoomData
 import com.example.whisper.utils.formatDateTime
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 class DataStoreManager(private val context: Context) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "chat_rooms")
 
-    // Store room IDs and their details separately
     private object PreferencesKeys {
         val ROOM_IDS = stringPreferencesKey("room_ids")
+        val USER_NAME = stringPreferencesKey("user_name")  // New key for user name
+
         fun roomName(id: String) = stringPreferencesKey("room_${id}_name")
         fun roomCode(id: String) = stringPreferencesKey("room_${id}_code")
         fun roomCreatedAt(id: String) = longPreferencesKey("room_${id}_created_at")
         fun roomExpiresAt(id: String) = longPreferencesKey("room_${id}_expires_at")
         fun roomLastActivity(id: String) = longPreferencesKey("room_${id}_last_activity")
+    }
+
+    // New methods for user name management
+    suspend fun saveUserName(name: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USER_NAME] = name
+        }
+    }
+
+    fun getUserName(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.USER_NAME] ?: ""
+        }
+    }
+
+    suspend fun getUserNameOnce(): String {
+        return context.dataStore.data.first()[PreferencesKeys.USER_NAME] ?: ""
     }
 
     suspend fun saveRoom(room: RoomData) {
