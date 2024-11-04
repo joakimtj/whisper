@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.whisper.ui.screens.chat.components.RoomList
 import com.example.whisper.ui.dialogs.CreateRoomDialog
@@ -64,6 +66,18 @@ fun MainScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 title = { Text("Chat Rooms") },
+                navigationIcon = {
+                    TextButton(
+                        onClick = { onNavigateToExplore() }
+                    ) {
+                        Text(
+                            "Discover",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
                 actions = {
                     IconButton(onClick = { showJoinDialog = true }) {
                         Icon(Icons.Default.Add, "Join Room")
@@ -73,9 +87,6 @@ fun MainScreen(
                     }
                     IconButton(onClick = { onNavigateToSettings() }) {
                         Icon(Icons.Default.Settings, "Edit settings")
-                    }
-                    IconButton(onClick = { onNavigateToExplore() }) {
-                        Icon(Icons.Default.Search, "Explore")
                     }
                 }
             )
