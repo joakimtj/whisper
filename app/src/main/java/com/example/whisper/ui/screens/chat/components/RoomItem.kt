@@ -1,4 +1,4 @@
-package com.example.whisper
+package com.example.whisper.ui.screens.chat.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,8 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.example.whisper.data.model.RoomData
 import com.example.whisper.utils.formatDateTime
 
-
-// RoomItem.kt - Updated to include Leave button
 @Composable
 fun RoomItem(
     room: RoomData,

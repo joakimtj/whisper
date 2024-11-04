@@ -1,4 +1,4 @@
-package com.example.whisper
+package com.example.whisper.ui.screens.chat.components
 
 // RoomsList.kt
 import android.util.Log

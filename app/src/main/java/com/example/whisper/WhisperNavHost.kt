@@ -9,11 +9,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.whisper.data.local.DataStoreManager
-import com.example.whisper.ui.screens.ChatScreen
-import com.example.whisper.ui.screens.CreateScreen
-import com.example.whisper.ui.screens.JoinScreen
-import com.example.whisper.ui.screens.MainScreen
-import com.example.whisper.ui.screens.SettingsScreen
+import com.example.whisper.ui.screens.chat.ChatScreen
+import com.example.whisper.ui.screens.create.CreateScreen
+import com.example.whisper.ui.screens.join.JoinScreen
+import com.example.whisper.ui.screens.main.MainScreen
+import com.example.whisper.ui.screens.settings.SettingsScreen
 import com.example.whisper.viewmodel.MainViewModel
 
 sealed class Screen(val route: String) {

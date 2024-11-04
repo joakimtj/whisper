@@ -1,4 +1,4 @@
-package com.example.whisper.ui.screens
+package com.example.whisper.ui.screens.join
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*

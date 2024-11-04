@@ -1,4 +1,4 @@
-package com.example.whisper.ui.screens
+package com.example.whisper.ui.screens.settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

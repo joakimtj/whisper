@@ -1,4 +1,4 @@
-package com.example.whisper.ui.screens
+package com.example.whisper.ui.screens.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,7 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.whisper.RoomList
+import com.example.whisper.ui.screens.chat.components.RoomList
 import com.example.whisper.ui.dialogs.CreateRoomDialog
 import com.example.whisper.viewmodel.MainViewModel
 

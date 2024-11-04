@@ -1,4 +1,4 @@
-package com.example.whisper.ui.screens
+package com.example.whisper.ui.screens.chat
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.whisper.data.local.DataStoreManager
 import com.example.whisper.viewmodel.ChatViewModel
-import com.example.whisper.viewmodel.MainViewModel
 import com.example.whisper.data.model.Message
 import com.example.whisper.utils.formatTime
 
