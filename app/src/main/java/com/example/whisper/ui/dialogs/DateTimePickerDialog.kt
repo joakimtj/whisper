@@ -18,8 +18,8 @@ fun DateTimePickerDialog(
     onDateTimeSelected: (Long) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var selectedHour by remember { mutableStateOf(12) }
-    var selectedMinute by remember { mutableStateOf(0) }
+    var selectedHour by remember { mutableIntStateOf(12) }
+    var selectedMinute by remember { mutableIntStateOf(0) }
     var showTimePicker by remember { mutableStateOf(false) }
 
     val datePickerState = rememberDatePickerState(
@@ -111,8 +111,8 @@ fun TimePickerDialog(
     initialHour: Int,
     initialMinute: Int
 ) {
-    var selectedHour by remember { mutableStateOf(initialHour) }
-    var selectedMinute by remember { mutableStateOf(initialMinute) }
+    var selectedHour by remember { mutableIntStateOf(initialHour) }
+    var selectedMinute by remember { mutableIntStateOf(initialMinute) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
