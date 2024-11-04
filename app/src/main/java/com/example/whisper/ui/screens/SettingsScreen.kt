@@ -7,44 +7,58 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
-// TODO: Integrate with Settings var in DataStore
-// TODO: Current display-name reflected in TextField
-// Tripcode will look like this:
-// String: "ThisIsHashed" TripCode: d8091mfak23
-// Not a real example, just to illustrate the idea.
-// TODO: Implement tripcode hashing and have it update in a separate text element
-// Probably need to update the Settings data class to have a 'hash'-field for the hashed code.
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.data.local.DataStoreManager
+import com.example.whisper.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    dataStoreManager: DataStoreManager
 ) {
     var displayName by remember { mutableStateOf("") }
     var tripcode by remember { mutableStateOf("") }
+    var generatedTripcode by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        dataStoreManager.getUserName().collect { name ->
+            displayName = name
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        dataStoreManager.getTripcodeInput().collect { savedTripcode ->
+            tripcode = savedTripcode
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        dataStoreManager.getTripcode().collect { code ->
+            generatedTripcode = code
+        }
+    }
 
     Scaffold(
-        topBar =
-        {
+        topBar = {
             CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = { Text("Settings") },
-            navigationIcon = {
-                    // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
-                    // Passed navController.popBackStack() in WhisperNavHost
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text("Settings") },
+                navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Localized description"
+                            contentDescription = "Navigate back"
                         )
                     }
-                } )
+                }
+            )
         }
     ) { padding ->
         Column(
@@ -66,19 +80,29 @@ fun SettingsScreen(
                 label = { Text("Tripcode") },
                 modifier = Modifier.fillMaxWidth()
             )
+            if (generatedTripcode.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Your identifier: !${generatedTripcode}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { /* Save settings */ },
+                onClick = {
+                    scope.launch {
+                        dataStoreManager.saveUserName(displayName)
+                        if (tripcode.isNotEmpty()) {
+                            dataStoreManager.saveTripcode(tripcode)
+                        }
+
+                    }
+                },
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text("Save")
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun SettingsScreenPreview() {
-    SettingsScreen(navigateBack = {})
 }

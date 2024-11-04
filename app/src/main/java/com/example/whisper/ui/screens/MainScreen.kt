@@ -1,54 +1,76 @@
 package com.example.whisper.ui.screens
 
-import android.util.Log
-import android.widget.Toast
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.whisper.DataStore.chatRooms
-import com.example.whisper.models.ChatRoom
-import com.example.whisper.models.ChatRoomUtils.formatTimestampDate
+import com.example.whisper.RoomList
+import com.example.whisper.ui.dialogs.CreateRoomDialog
+import com.example.whisper.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController) {
-    val context = LocalContext.current
-    val chats = remember { chatRooms }
+fun MainScreen(
+    viewModel: MainViewModel,
+    onNavigateToJoin: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToChat: (String, String) -> Unit
+) {
+    // Move your existing Scaffold and content here from App.kt
+    // Replace direct state changes with navigation calls
+    // For example: instead of `currentRoom = room`,
+    // use `onNavigateToChat(room.id, room.name)`
+
+    // Dialogs
+    var showJoinDialog by remember { mutableStateOf(false) }
+    var showCreateDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.primary
                 ),
-                title = { Text("Whisper") },
+                title = { Text("Chat Rooms") },
                 actions = {
-                    IconButton(onClick = {
-                        Log.d("SettingsScreen", "Icon clicked. Attempting to navigate to SettingsScreen")
-                        try {
-                            navController.navigate("settings")
-                        } catch (e: Exception) {
-                            Log.e("MainScreen", "Navigation to Settings failed", e)
-                            Toast.makeText(context, "Navigation failed: ${e.message}", Toast.LENGTH_LONG).show()
-                        }
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = "SettingsScreen icon"
-                        )
+                    IconButton(onClick = { showJoinDialog = true }) {
+                        Icon(Icons.Default.Add, "Join Room")
+                    }
+                    IconButton(onClick = { showCreateDialog = true }) {
+                        Icon(Icons.Default.Create, "Create Room")
+                    }
+                    IconButton(onClick = { onNavigateToSettings() }) {
+                        Icon(Icons.Default.Settings, "Edit settings")
                     }
                 }
             )
@@ -56,69 +78,156 @@ fun MainScreen(navController: NavController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    Log.d("MainScreen", "FAB clicked. Attempting to navigate to createJoin")
-                    try {
-                        navController.navigate("join")
-                    } catch (e: Exception) {
-                        Log.e("MainScreen", "Navigation failed", e)
-                        Toast.makeText(context, "Navigation failed: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
+                    onNavigateToJoin()
                 }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Create or Join Chat")
             }
         }
     ) { padding ->
-        if (chats.isEmpty()) {
-            // Display a message when there are no chat rooms
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) {
-                Text(
-                    text = "No chat rooms available. \nCreate or join a room to get started!",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(16.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            if (viewModel.joinedRooms.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "No rooms joined yet",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Create a new room or join an existing one",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else {
+                RoomList(
+                    rooms = viewModel.joinedRooms,
+                    onLeaveRoom = { roomId -> viewModel.leaveRoom(roomId) },
+                    onRoomClick = { room -> onNavigateToChat(room.id, room.name) },
+                    modifier = Modifier.fillMaxSize()
                 )
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) {
-                items(chats) { chatRoom ->
-                        ChatListItem(chatRoom) {
-                            navController.navigate("chat/${chatRoom.id}")
+
+            // Error dialog
+            errorMessage?.let { message ->
+                AlertDialog(
+                    onDismissRequest = { errorMessage = null },
+                    title = { Text("Message") },
+                    text = { Text(message) },
+                    confirmButton = {
+                        TextButton(onClick = { errorMessage = null }) {
+                            Text("OK")
+                        }
                     }
-                }
+                )
             }
         }
     }
-}
 
-@Composable
-fun ChatListItem(chatRoom: ChatRoom, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable(onClick = onClick)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(12.dp)
-        ) {
-            Text(text = chatRoom.name, style = MaterialTheme.typography.headlineSmall)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Expires on ${formatTimestampDate(chatRoom.expires.toEpochMilli())}", style = MaterialTheme.typography.bodyMedium)
-        }
+    // Dialogs
+    if (showJoinDialog) {
+        JoinRoomDialog(
+            onDismiss = { showJoinDialog = false },
+            onJoin = { code ->
+                viewModel.joinRoom(
+                    code = code,
+                    onSuccess = { showJoinDialog = false },
+                    onError = { error -> errorMessage = error }
+                )
+            }
+        )
+    }
+
+    if (showCreateDialog) {
+        CreateRoomDialog(
+            onDismiss = { showCreateDialog = false },
+            onCreate = { name, expirationDate ->
+                viewModel.createRoom(
+                    name = name,
+                    expiresAt = expirationDate,
+                    onSuccess = { code ->
+                        showCreateDialog = false
+                        errorMessage = "Room created! Code: $code"
+                    },
+                    onError = { error -> errorMessage = error }
+                )
+            }
+        )
+    }
+// Dialogs
+    if (showJoinDialog) {
+        JoinRoomDialog(
+            onDismiss = { showJoinDialog = false },
+            onJoin = { code ->
+                viewModel.joinRoom(
+                    code = code,
+                    onSuccess = { showJoinDialog = false },
+                    onError = { error -> errorMessage = error }
+                )
+            }
+        )
+    }
+
+    if (showCreateDialog) {
+        CreateRoomDialog(
+            onDismiss = { showCreateDialog = false },
+            onCreate = { name, expirationDate ->
+                viewModel.createRoom(
+                    name = name,
+                    expiresAt = expirationDate,
+                    onSuccess = { code ->
+                        showCreateDialog = false
+                        errorMessage = "Room created! Code: $code"
+                    },
+                    onError = { error -> errorMessage = error }
+                )
+            }
+        )
     }
 }
 
-@Preview
 @Composable
-fun MainScreenPreview() {
-    MainScreen(rememberNavController())
+fun JoinRoomDialog(
+    onDismiss: () -> Unit,
+    onJoin: (String) -> Unit
+) {
+    var code by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Join Room") },
+        text = {
+            TextField(
+                value = code,
+                onValueChange = { code = it.uppercase() },
+                label = { Text("Room Code") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onJoin(code) },
+                enabled = code.length == 6
+            ) {
+                Text("Join")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }

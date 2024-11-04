@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
+    // Google services
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -50,7 +53,22 @@ android {
 }
 
 dependencies {
+    // Import the Firebase BoM
+    // For some reason the step-by-step guide on adding firebase to the project
+    // on the Firebase website has the below import statement
+    // implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    // Android Studio suggested it be corrected to what you see un-commentated below
+    implementation(platform(libs.firebase.bom))
 
+    // TODO: Add the dependencies for Firebase products you want to use
+
+    // When using the BoM, don't specify versions in Firebase dependencies
+    // implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.analytics)
+    
+    // Add the dependencies for any other desired Firebase products
+
+    // https://firebase.google.com/docs/android/setup#available-libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -61,6 +79,12 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.firebase.firestore)
+    implementation(libs.androidx.datastore.core.android)
+    implementation (libs.androidx.datastore.preferences)
+    implementation (libs.kotlinx.serialization.json)
+    implementation(libs.firebase.firestore.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,4 +92,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.gson)
 }

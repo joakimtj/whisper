@@ -1,52 +1,91 @@
 package com.example.whisper
 
-import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.whisper.ui.screens.*
+import com.example.whisper.data.local.DataStoreManager
+import com.example.whisper.ui.screens.ChatScreen
+import com.example.whisper.ui.screens.CreateScreen
+import com.example.whisper.ui.screens.JoinScreen
+import com.example.whisper.ui.screens.MainScreen
+import com.example.whisper.ui.screens.SettingsScreen
+import com.example.whisper.viewmodel.MainViewModel
+
+sealed class Screen(val route: String) {
+    data object Main : Screen("main")
+    data object Join : Screen("join")
+    data object Create : Screen("create")
+    data object Settings : Screen("settings")
+    data object Chat : Screen("chat/{roomId}/{roomName}") {
+        fun createRoute(roomId: String, roomName: String): String =
+            "chat/$roomId/${roomName}"
+    }
+}
 
 @Composable
-fun WhisperNavHost() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "main") {
-        composable("main") {
-            Log.d("Navigation", "Navigating to MainScreen")
-            MainScreen(navController)
-        }
-        composable("chat/{roomId}", arguments = listOf(navArgument("roomId") { type = NavType.StringType })) { backStackEntry ->
-            val roomId = backStackEntry.arguments?.getString("roomId")
-            Log.d("Navigation", "Navigating to ChatScreen with roomId: $roomId")
-            ChatScreen(
-                roomId = roomId ?: "",
-                navigateBack = {
-                    navController.navigate("main") {
-                        popUpTo("main") { inclusive = true }
-                    }
+fun WhisperNavHost(
+    dataStoreManager: DataStoreManager,
+    navController: NavHostController = rememberNavController()
+) {
+    val mainViewModel: MainViewModel = viewModel(
+        factory = MainViewModel.Factory(dataStoreManager)
+    )
+
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Main.route
+    ) {
+        composable(Screen.Main.route) {
+            MainScreen(
+                viewModel = mainViewModel,
+                onNavigateToJoin = { navController.navigate(Screen.Join.route) },
+                onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
+                onNavigateToChat = { roomId, roomName ->
+                    navController.navigate(Screen.Chat.createRoute(roomId, roomName))
                 }
             )
         }
-        composable("settings") {
-            Log.d("Navigation", "Navigating to SettingsScreen")
-            // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
-            SettingsScreen(){navController.popBackStack()}
-        }
-        composable("join") {
-            Log.d("Navigation", "Navigating to JoinScreen")
-            JoinScreen(navController){navController.popBackStack()}
-        }
-        composable("create/{roomId}", arguments = listOf(navArgument("roomId") {type = NavType.StringType})) { backStackEntry ->
-            val roomId = backStackEntry.arguments?.getString("roomId")
-            Log.d("Navigation", "Navigating to CreateScreen")
+
+        composable(Screen.Create.route) {
             CreateScreen(
-                roomId = roomId ?: "",
-                navController = navController,
-                navigateBack = { navController.popBackStack() }
+                viewModel = mainViewModel,
+                onNavigateUp = { navController.navigate(Screen.Main.route)}
             )
         }
 
+        composable(Screen.Join.route) {
+            JoinScreen(
+                viewModel = mainViewModel,
+                onNavigateUp = { navController.popBackStack() },
+                onNavigateCreate = { navController.navigate(Screen.Create.route)}
+            )
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                navigateBack = { navController.popBackStack() },
+                dataStoreManager
+            )
+        }
+
+        composable(
+            route = Screen.Chat.route,
+            arguments = listOf(
+                navArgument("roomId") { type = NavType.StringType },
+                navArgument("roomName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            ChatScreen(
+                roomId = backStackEntry.arguments?.getString("roomId") ?: "",
+                roomName = backStackEntry.arguments?.getString("roomName") ?: "",
+                onNavigateUp = { navController.popBackStack() },
+                dataStoreManager = dataStoreManager
+            )
+        }
     }
 }

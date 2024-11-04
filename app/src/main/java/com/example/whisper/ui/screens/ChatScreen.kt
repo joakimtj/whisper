@@ -1,42 +1,50 @@
 package com.example.whisper.ui.screens
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.whisper.DataStore.addMessageToChatRoom
-import com.example.whisper.DataStore.getChatRoom
-import com.example.whisper.models.ChatMessage
-import com.example.whisper.models.ChatRoomUtils.formatTimestampHr
-import java.util.UUID
-
-// TODO: 'Style' messages to use display-name (if any)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.data.local.DataStoreManager
+import com.example.whisper.viewmodel.ChatViewModel
+import com.example.whisper.viewmodel.MainViewModel
+import com.example.whisper.data.model.Message
+import com.example.whisper.utils.formatTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
-    val chatRoom = remember { mutableStateOf(getChatRoom(roomId)) }
-    var message by remember { mutableStateOf("") }
-    val messages = chatRoom.value?.messages ?: emptyList()
+fun ChatScreen(
+    roomId: String,
+    roomName: String,
+    onNavigateUp: () -> Unit,
+    viewModel: ChatViewModel = viewModel(),
+    dataStoreManager: DataStoreManager
+) {
+    var messageText by remember { mutableStateOf("") }
+    var senderName by remember { mutableStateOf("") }
+    var tripcode by remember { mutableStateOf("") }
+    // Load the username from MainViewModel
+    LaunchedEffect(Unit) {
+        dataStoreManager.getUserName().collect { name ->
+            senderName = name
+        }
+    }
 
-    var forceUpdate by remember { mutableIntStateOf(0) }
+    LaunchedEffect(Unit) {
+        dataStoreManager.getTripcode().collect {
+            trip -> tripcode = trip
+        }
+    }
 
-    LaunchedEffect(forceUpdate) {
-        chatRoom.value = getChatRoom(roomId)
+    LaunchedEffect(roomId) {
+        viewModel.setRoom(roomId, roomName)
     }
 
     Scaffold(
@@ -46,140 +54,128 @@ fun ChatScreen(roomId: String, navigateBack: () -> Unit) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text(roomId) },
+                title = { Text(roomName) },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate back"
-                        )
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        Log.d("AddTestMessage", "Click AddTestMsg.")
-                        try {
-                            val testMessage = ChatMessage(
-                                id = UUID.randomUUID().toString(),
-                                senderId = "DEBUG",
-                                content = "TEST",
-                                timestamp = System.currentTimeMillis(),
-                                isSentByUser = false
-                            )
-                            addMessageToChatRoom(roomId, testMessage)
-                            // Refresh the chatRoom state to trigger recomposition
-                            chatRoom.value = getChatRoom(roomId)
-                            forceUpdate++ // Hacky fix for recomposition not triggering despite above comment
-                            Log.d("AddTestMessage", "Test message added. Total messages: ${chatRoom.value?.messages?.size}")
-                        } catch (e: Exception) {
-                            Log.e("AddTestMessage", "Adding test message failed.", e)
-                        }
-                    })
-                    {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Add Test Message"
-                        )
+                }
+            )
+        },
+        bottomBar = {
+            ChatInput(
+                messageText = messageText,
+                onMessageChange = { messageText = it },
+                onSendMessage = {
+                    if (messageText.isNotBlank() && senderName.isNotBlank()) {
+                        viewModel.sendMessage(roomId, messageText, senderName, tripcode)
+                        messageText = ""
                     }
                 }
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                items(messages) { msg ->
-                    MessageItem(msg)
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextField(
-                    value = message,
-                    onValueChange = { message = it },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp),
-                    placeholder = { Text("Type a message") }
-                )
-                IconButton(
-                    onClick = {
-                        if (message.isBlank()) return@IconButton
-                        val newMessage = ChatMessage(
-                            id = UUID.randomUUID().toString(),
-                            senderId = "TEMPORARY",
-                            content = message,
-                            timestamp = System.currentTimeMillis(),
-                            isSentByUser = true
-                        )
-                        addMessageToChatRoom(roomId, newMessage)
-                        message = ""
-                        forceUpdate++
-                        Log.d("SendMessage", "Message sent. Total messages: ${chatRoom.value?.messages?.size}")
-                    }
-                ) {
-                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MessageItem(msg: ChatMessage) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .align(if (msg.isSentByUser) Alignment.CenterEnd else Alignment.CenterStart)
-                .widthIn(max = 280.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .background(
-                        color = if (msg.isSentByUser)
-                            MaterialTheme.colorScheme.primaryContainer
-                        else
-                            MaterialTheme.colorScheme.secondaryContainer,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-            ) {
-                Text(
-                    text = msg.content,
-                    modifier = Modifier.padding(12.dp),
-                    color = if (msg.isSentByUser)
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    else
-                        MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            }
-            Text(
-                text = formatTimestampHr(msg.timestamp),
-                modifier = Modifier.padding(start = 4.dp, top = 2.dp),
-                fontSize = 12.sp,
-                fontStyle = FontStyle.Italic,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            MessageList(
+                messages = viewModel.messages,
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
 }
 
-@Preview
 @Composable
-fun ChatScreenPreview() {
-    ChatScreen("Blop Glarp Appreciation", navigateBack = {})
+fun ChatInput(
+    messageText: String,
+    onMessageChange: (String) -> Unit,
+    onSendMessage: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextField(
+            value = messageText,
+            onValueChange = onMessageChange,
+            placeholder = { Text("Type a message") },
+            modifier = Modifier.weight(1f),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        IconButton(
+            onClick = onSendMessage,
+            enabled = messageText.isNotBlank()
+        ) {
+            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
+        }
+    }
+}
+
+@Composable
+fun MessageList(
+    messages: List<Message>,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier,
+        reverseLayout = true
+    ) {
+        items(messages) { message ->
+            MessageItem(message)
+        }
+    }
+}
+
+@Composable
+fun MessageItem(message: Message) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+            ) {
+                Row() {
+                    Text(
+                        text = message.senderName,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    // Tripcode is never null because...
+                    // ... get tripcode func returns "" when null
+                    // TODO: Change tripcode type in Message obj to just string then remove cond
+                    if (message.tripcode != null) {
+                        Text(
+                            text = " " + message.tripcode,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                }
+            }
+
+
+            Text(
+                text = formatTime(message.timestamp),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = message.content,
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 }

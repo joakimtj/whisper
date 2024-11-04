@@ -1,6 +1,5 @@
 package com.example.whisper.ui.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -12,20 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.whisper.DataStore.hasChatRoom
-
-/*
-*   For the alpha we will only check if a chatroom exists in memory
-*   When we implement Firebase ofc we will have to check against the backend
-*/
-
-// TODO: If a chatroom does not exist, navigate user to create screen to input name + expiration
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
+fun JoinScreen(viewModel: MainViewModel = viewModel(),
+               onNavigateUp: () -> Unit,
+               onNavigateCreate: () -> Unit)
+{
     var code by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
@@ -41,7 +35,7 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
                 navigationIcon = {
                     // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
                     // Passed navController.popBackStack() in WhisperNavHost
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = onNavigateUp) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Navigate back from Create/Join."
@@ -68,41 +62,15 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    Log.d("JoinButton", "Button clicked with code: $code")
-                    if (code.isBlank()) {
-                        errorMessage = "Please enter a room code"
-                        Log.d("JoinButton", "Code is blank")
-                        Toast.makeText(context, "Please enter a room code.", Toast.LENGTH_SHORT).show()
-                        return@Button
-                    }
-                    if (code.length != 4) {
-                        errorMessage = "Room code should be 4 digits in length."
-                        Toast.makeText(context, "Room should be 4 digits in length.", Toast.LENGTH_SHORT).show()
-                        return@Button
-                    }
-
-                    val roomExists = hasChatRoom(code)
-                    Log.d("JoinButton", "Room exists: $roomExists for code: $code")
-
-                    if (roomExists) {
-                        Log.d("JoinButton", "Navigating to chat/$code")
-                        navController.navigate("chat/$code") {
-                            popUpTo("main") {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
+                    viewModel.joinRoom(
+                        code,
+                        onError = {
+                                onNavigateCreate()
+                        },
+                        onSuccess = {
+                            onNavigateUp()
                         }
-                    } else {
-                        Log.d("JoinButton", "Navigating to create/$code")
-                        navController.navigate("create/$code") {
-                            popUpTo("join") {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
-                        }
-                    }
-                    errorMessage = null
+                    )
                 }
             ) {
                 Text("Join or Create Room")
@@ -122,10 +90,4 @@ fun JoinScreen(navController: NavController, navigateBack: () -> Unit) {
         }
 
     }
-}
-
-@Preview
-@Composable
-fun JoinScreenPreview() {
-    JoinScreen(rememberNavController(), navigateBack = {})
 }

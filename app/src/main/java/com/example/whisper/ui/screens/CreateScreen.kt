@@ -1,7 +1,5 @@
 package com.example.whisper.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -11,25 +9,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.whisper.DataStore.createChatRoom
-
-// TODO: Change expiration to be a drop-down with sets of values.
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.ui.dialogs.DateTimePickerDialog
+import com.example.whisper.viewmodel.MainViewModel
+import com.example.whisper.utils.formatDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateScreen(roomId: String, navController: NavController, navigateBack: () -> Unit) {
+fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Unit) {
     var name by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-    var selectedExpirationOption by remember { mutableStateOf<ExpirationOption?>(null) }
 
-    val expirationOptions = listOf(
-        ExpirationOption("60 seconds", 60),
-        ExpirationOption("24 hours", 24 * 60 * 60),
-        ExpirationOption("7 days", 7 * 24 * 60 * 60),
-        ExpirationOption("30 days", 30 * 24 * 60 * 60)
-    )
+    var showDateTimePicker by remember { mutableStateOf(false)}
+    var expirationDateTime by remember { mutableStateOf<Long?>(null) }
+
+    if (showDateTimePicker) {
+        DateTimePickerDialog(
+            onDateTimeSelected = {
+                expirationDateTime = it
+                showDateTimePicker = false
+            },
+            onDismiss = { showDateTimePicker = false }
+        )
+    }
     Scaffold(
         topBar =
         {
@@ -42,7 +43,7 @@ fun CreateScreen(roomId: String, navController: NavController, navigateBack: () 
                 navigationIcon = {
                     // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
                     // Passed navController.popBackStack() in WhisperNavHost
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = onNavigateUp) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Navigate back from Create/Join."
@@ -65,50 +66,37 @@ fun CreateScreen(roomId: String, navController: NavController, navigateBack: () 
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
-
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded },
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                TextField(
-                    value = selectedExpirationOption?.label ?: "",
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Select expiration") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                ) {
-                    expirationOptions.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option.label) },
-                            onClick = {
-                                selectedExpirationOption = option
-                                expanded = false
-                            }
-                        )
+                Text(
+                    text = if (expirationDateTime != null) {
+                        "Expires: ${formatDateTime(expirationDateTime!!)}"
+                    } else {
+                        "Select expiration date and time"
                     }
+                )
+                TextButton(onClick = { showDateTimePicker = true }) {
+                    Text(if (expirationDateTime == null) "Select" else "Change")
                 }
             }
 
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             Button(
                 onClick = {
-                    if (name.isBlank() || selectedExpirationOption == null)
+                    if (name.isBlank())
                     {
                         return@Button
                     }
-                    createChatRoom(roomId, name, selectedExpirationOption!!.seconds)
-                    navController.navigate("chat/$roomId")
+                    viewModel.createRoom(
+                        name = name,
+                        expiresAt = expirationDateTime as Long,
+                        onSuccess = { onNavigateUp.invoke()
+                        },
+                        // Yup! Passing in nothing. :)
+                        onError = {}
+                    )
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -117,11 +105,3 @@ fun CreateScreen(roomId: String, navController: NavController, navigateBack: () 
         }
     }
 }
-
-@Preview
-@Composable
-fun CreateScreenPreview() {
-    CreateScreen("", rememberNavController(), navigateBack = {})
-}
-
-data class ExpirationOption(val label: String, val seconds: Long)
