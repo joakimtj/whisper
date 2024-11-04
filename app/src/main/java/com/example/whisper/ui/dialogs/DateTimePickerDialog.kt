@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import java.time.*
 
+// Don't bother editing this component. It blows up no matter what you do. Fucking piece of shit.
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateTimePickerDialog(
@@ -97,7 +99,8 @@ fun DateTimePickerDialog(
                 )
 
                 TextButton(onClick = { showTimePicker = true }) {
-                    Text("Change Time")
+                    Text(text = "Change Time",
+                        style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }
