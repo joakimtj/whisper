@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.whisper.data.model.RoomData
+import com.example.whisper.utils.TripcodeUtils
 import com.example.whisper.utils.formatDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -20,6 +21,8 @@ class DataStoreManager(private val context: Context) {
     private object PreferencesKeys {
         val ROOM_IDS = stringPreferencesKey("room_ids")
         val USER_NAME = stringPreferencesKey("user_name")  // New key for user name
+        val TRIPCODE = stringPreferencesKey("tripcode")
+        val TRIPCODE_INPUT = stringPreferencesKey("tripcode_input")
 
         fun roomName(id: String) = stringPreferencesKey("room_${id}_name")
         fun roomCode(id: String) = stringPreferencesKey("room_${id}_code")
@@ -35,6 +38,15 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    suspend fun saveTripcode(input: String) {
+        context.dataStore.edit { preferences ->
+            // Save both the input and the generated tripcode
+            preferences[PreferencesKeys.TRIPCODE_INPUT] = input
+            preferences[PreferencesKeys.TRIPCODE] = TripcodeUtils.generateTripcode(input)
+        }
+    }
+
+
     fun getUserName(): Flow<String> {
         return context.dataStore.data.map { preferences ->
             preferences[PreferencesKeys.USER_NAME] ?: ""
@@ -43,6 +55,18 @@ class DataStoreManager(private val context: Context) {
 
     suspend fun getUserNameOnce(): String {
         return context.dataStore.data.first()[PreferencesKeys.USER_NAME] ?: ""
+    }
+
+    fun getTripcode(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.TRIPCODE] ?: ""
+        }
+    }
+
+    fun getTripcodeInput(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.TRIPCODE_INPUT] ?: ""
+        }
     }
 
     suspend fun saveRoom(room: RoomData) {

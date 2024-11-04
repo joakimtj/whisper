@@ -20,11 +20,24 @@ fun SettingsScreen(
 ) {
     var displayName by remember { mutableStateOf("") }
     var tripcode by remember { mutableStateOf("") }
+    var generatedTripcode by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         mainViewModel.dataStoreManager.getUserName().collect { name ->
             displayName = name
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        mainViewModel.dataStoreManager.getTripcodeInput().collect { savedTripcode ->
+            tripcode = savedTripcode
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        mainViewModel.dataStoreManager.getTripcode().collect { code ->
+            generatedTripcode = code
         }
     }
 
@@ -66,12 +79,23 @@ fun SettingsScreen(
                 label = { Text("Tripcode") },
                 modifier = Modifier.fillMaxWidth()
             )
+            if (generatedTripcode.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Your identifier: !${generatedTripcode}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     scope.launch {
                         mainViewModel.dataStoreManager.saveUserName(displayName)
-                        navigateBack()
+                        if (tripcode.isNotEmpty()) {
+                            mainViewModel.dataStoreManager.saveTripcode(tripcode)
+                        }
+
                     }
                 },
                 modifier = Modifier.align(Alignment.End)

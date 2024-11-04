@@ -53,13 +53,14 @@ class ChatViewModel : ViewModel() {
             }
     }
 
-    fun sendMessage(roomId: String, content: String, senderName: String) {
+    fun sendMessage(roomId: String, content: String, senderName: String, tripcode: String?) {
         if (content.isBlank() || senderName.isBlank()) return
 
         val message = hashMapOf(
             "content" to content,
             "senderName" to senderName,
-            "timestamp" to System.currentTimeMillis()
+            "timestamp" to System.currentTimeMillis(),
+            "tripcode" to tripcode
         )
 
         db.collection("rooms")

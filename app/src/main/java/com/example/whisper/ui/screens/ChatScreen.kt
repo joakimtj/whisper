@@ -28,11 +28,17 @@ fun ChatScreen(
 ) {
     var messageText by remember { mutableStateOf("") }
     var senderName by remember { mutableStateOf("") }
-
+    var tripcode by remember { mutableStateOf("") }
     // Load the username from MainViewModel
     LaunchedEffect(Unit) {
         mainViewModel.dataStoreManager.getUserName().collect { name ->
             senderName = name
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        mainViewModel.dataStoreManager.getTripcode().collect {
+            trip -> tripcode = trip
         }
     }
 
@@ -61,7 +67,7 @@ fun ChatScreen(
                 onMessageChange = { messageText = it },
                 onSendMessage = {
                     if (messageText.isNotBlank() && senderName.isNotBlank()) {
-                        viewModel.sendMessage(roomId, messageText, senderName)
+                        viewModel.sendMessage(roomId, messageText, senderName, tripcode)
                         messageText = ""
                     }
                 }
@@ -138,7 +144,8 @@ fun MessageItem(message: Message) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = message.senderName,
+                // TODO: Append tripcode in a better way?
+                text = message.senderName + " " + message.tripcode,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary
             )
