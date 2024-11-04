@@ -14,24 +14,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.whisper.viewmodel.MainViewModel
 
-/*
-*   For the alpha we will only check if a chatroom exists in memory
-*   When we implement Firebase ofc we will have to check against the backend
-*/
-
-// TODO: If a chatroom does not exist, navigate user to create screen to input name + expiration
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JoinScreen(viewModel: MainViewModel = viewModel(), navigateBack: () -> Unit) {
+fun JoinScreen(viewModel: MainViewModel = viewModel(),
+               onNavigateUp: () -> Unit,
+               onNavigateCreate: () -> Unit)
+{
     var code by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var createScreen by remember {mutableStateOf(false)}
 
-    if (createScreen) {
-        CreateScreen(viewModel, code, navigateBack)
-    }
-    else
     Scaffold(
         topBar =
         {
@@ -44,7 +35,7 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(), navigateBack: () -> Unit)
                 navigationIcon = {
                     // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
                     // Passed navController.popBackStack() in WhisperNavHost
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = onNavigateUp) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Navigate back from Create/Join."
@@ -74,10 +65,10 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(), navigateBack: () -> Unit)
                     viewModel.joinRoom(
                         code,
                         onError = {
-                                createScreen = true
+                                onNavigateCreate()
                         },
                         onSuccess = {
-                            navigateBack.invoke()
+                            onNavigateUp()
                         }
                     )
                 }
@@ -99,10 +90,4 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(), navigateBack: () -> Unit)
         }
 
     }
-}
-
-@Preview
-@Composable
-fun JoinScreenPreview() {
-    JoinScreen(navigateBack = {})
 }

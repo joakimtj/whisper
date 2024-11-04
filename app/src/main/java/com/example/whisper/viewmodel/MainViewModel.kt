@@ -1,8 +1,8 @@
 package com.example.whisper.viewmodel
 
-import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.data.local.DataStoreManager
 import com.example.whisper.data.model.RoomData
@@ -11,10 +11,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import java.util.Date
 
-
 // MainViewModel.kt
-class MainViewModel(application: Application) : AndroidViewModel(application) {
-    val dataStoreManager = DataStoreManager(application)
+class MainViewModel(
+    private val dataStoreManager: DataStoreManager
+): ViewModel() {
     private val _joinedRooms = mutableStateListOf<RoomData>()
     val joinedRooms: List<RoomData> = _joinedRooms
 
@@ -133,5 +133,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return (1..6)
             .map { ('A'..'Z').random() }
             .joinToString("")
+    }
+
+    class Factory(
+        private val dataStoreManager: DataStoreManager
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                return MainViewModel(dataStoreManager) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.data.local.DataStoreManager
 import com.example.whisper.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsScreen(
     navigateBack: () -> Unit,
-    mainViewModel: MainViewModel = viewModel()
+    dataStoreManager: DataStoreManager
 ) {
     var displayName by remember { mutableStateOf("") }
     var tripcode by remember { mutableStateOf("") }
@@ -24,19 +25,19 @@ fun SettingsScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        mainViewModel.dataStoreManager.getUserName().collect { name ->
+        dataStoreManager.getUserName().collect { name ->
             displayName = name
         }
     }
 
     LaunchedEffect(Unit) {
-        mainViewModel.dataStoreManager.getTripcodeInput().collect { savedTripcode ->
+        dataStoreManager.getTripcodeInput().collect { savedTripcode ->
             tripcode = savedTripcode
         }
     }
 
     LaunchedEffect(Unit) {
-        mainViewModel.dataStoreManager.getTripcode().collect { code ->
+        dataStoreManager.getTripcode().collect { code ->
             generatedTripcode = code
         }
     }
@@ -91,9 +92,9 @@ fun SettingsScreen(
             Button(
                 onClick = {
                     scope.launch {
-                        mainViewModel.dataStoreManager.saveUserName(displayName)
+                        dataStoreManager.saveUserName(displayName)
                         if (tripcode.isNotEmpty()) {
-                            mainViewModel.dataStoreManager.saveTripcode(tripcode)
+                            dataStoreManager.saveTripcode(tripcode)
                         }
 
                     }

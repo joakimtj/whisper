@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.data.local.DataStoreManager
 import com.example.whisper.viewmodel.ChatViewModel
 import com.example.whisper.viewmodel.MainViewModel
 import com.example.whisper.data.model.Message
@@ -24,20 +25,20 @@ fun ChatScreen(
     roomName: String,
     onNavigateUp: () -> Unit,
     viewModel: ChatViewModel = viewModel(),
-    mainViewModel: MainViewModel = viewModel()
+    dataStoreManager: DataStoreManager
 ) {
     var messageText by remember { mutableStateOf("") }
     var senderName by remember { mutableStateOf("") }
     var tripcode by remember { mutableStateOf("") }
     // Load the username from MainViewModel
     LaunchedEffect(Unit) {
-        mainViewModel.dataStoreManager.getUserName().collect { name ->
+        dataStoreManager.getUserName().collect { name ->
             senderName = name
         }
     }
 
     LaunchedEffect(Unit) {
-        mainViewModel.dataStoreManager.getTripcode().collect {
+        dataStoreManager.getTripcode().collect {
             trip -> tripcode = trip
         }
     }

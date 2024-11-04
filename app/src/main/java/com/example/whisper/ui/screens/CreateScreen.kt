@@ -16,7 +16,7 @@ import com.example.whisper.utils.formatDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateScreen(viewModel: MainViewModel = viewModel(), roomId: String, navigateBack: () -> Unit) {
+fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Unit) {
     var name by remember { mutableStateOf("") }
 
     var showDateTimePicker by remember { mutableStateOf(false)}
@@ -43,7 +43,7 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), roomId: String, navigat
                 navigationIcon = {
                     // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
                     // Passed navController.popBackStack() in WhisperNavHost
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = onNavigateUp) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Navigate back from Create/Join."
@@ -92,7 +92,7 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), roomId: String, navigat
                     viewModel.createRoom(
                         name = name,
                         expiresAt = expirationDateTime as Long,
-                        onSuccess = { navigateBack.invoke()
+                        onSuccess = { onNavigateUp.invoke()
                         },
                         // Yup! Passing in nothing. :)
                         onError = {}
@@ -105,11 +105,3 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), roomId: String, navigat
         }
     }
 }
-
-@Preview
-@Composable
-fun CreateScreenPreview() {
-    CreateScreen(viewModel(), "", navigateBack = {})
-}
-
-data class ExpirationOption(val label: String, val seconds: Long)
