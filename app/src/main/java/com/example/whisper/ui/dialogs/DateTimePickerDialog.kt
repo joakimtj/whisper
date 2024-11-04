@@ -3,7 +3,11 @@ package com.example.whisper.ui.dialogs
 // DateTimePickerDialog.kt
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import java.time.*
@@ -79,7 +83,7 @@ fun DateTimePickerDialog(
         Column {
             DatePicker(state = datePickerState)
 
-            Divider(modifier = Modifier.padding(horizontal = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             Row(
                 modifier = Modifier
@@ -114,36 +118,51 @@ fun TimePickerDialog(
         onDismissRequest = onDismiss,
         title = { Text("Select Time") },
         text = {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                    .wrapContentHeight()
             ) {
-                // Hour picker
-                NumberPicker(
-                    value = selectedHour,
-                    onValueChange = { selectedHour = it },
-                    range = 0..23,
-                    format = { String.format("%02d", it) }
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .wrapContentHeight(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Hour picker
+                        NumberPicker(
+                            value = selectedHour,
+                            onValueChange = { selectedHour = it },
+                            range = 0..23,
+                            format = { String.format("%02d", it) }
+                        )
 
-                Text(":", modifier = Modifier.padding(horizontal = 8.dp))
+                        Text(
+                            ":",
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
 
-                // Minute picker
-                NumberPicker(
-                    value = selectedMinute,
-                    onValueChange = { selectedMinute = it },
-                    range = 0..59,
-                    format = { String.format("%02d", it) }
-                )
+                        // Minute picker
+                        NumberPicker(
+                            value = selectedMinute,
+                            onValueChange = { selectedMinute = it },
+                            range = 0..59,
+                            format = { String.format("%02d", it) }
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
             TextButton(
-                onClick = {
-                    onTimeSelected(selectedHour, selectedMinute)
-                }
+                onClick = { onTimeSelected(selectedHour, selectedMinute) }
             ) {
                 Text("OK")
             }
@@ -163,14 +182,23 @@ fun NumberPicker(
     range: IntRange,
     format: (Int) -> String = { it.toString() }
 ) {
-    Column {
+    Column(
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(horizontal = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         IconButton(
             onClick = {
                 val newValue = if (value >= range.last) range.first else value + 1
                 onValueChange(newValue)
-            }
+            },
+            modifier = Modifier.size(48.dp)
         ) {
-            Text("▲")
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowUp,
+                contentDescription = "Increment"
+            )
         }
 
         Text(
@@ -183,9 +211,13 @@ fun NumberPicker(
             onClick = {
                 val newValue = if (value <= range.first) range.last else value - 1
                 onValueChange(newValue)
-            }
+            },
+            modifier = Modifier.size(48.dp)
         ) {
-            Text("▼")
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = "Decrement"
+            )
         }
     }
 }
