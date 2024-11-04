@@ -12,7 +12,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 
 // MainActivity.kt
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalSerializationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
