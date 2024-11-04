@@ -11,9 +11,11 @@ import androidx.navigation.navArgument
 import com.example.whisper.data.local.DataStoreManager
 import com.example.whisper.ui.screens.chat.ChatScreen
 import com.example.whisper.ui.screens.create.CreateScreen
+import com.example.whisper.ui.screens.explore.ExploreScreen
 import com.example.whisper.ui.screens.join.JoinScreen
 import com.example.whisper.ui.screens.main.MainScreen
 import com.example.whisper.ui.screens.settings.SettingsScreen
+import com.example.whisper.viewmodel.ExploreViewModel
 import com.example.whisper.viewmodel.MainViewModel
 
 sealed class Screen(val route: String) {
@@ -25,6 +27,7 @@ sealed class Screen(val route: String) {
         fun createRoute(roomId: String, roomName: String): String =
             "chat/$roomId/${roomName}"
     }
+    data object Explore : Screen("explore/{roomId}/{roomName}")
 }
 
 @Composable
@@ -35,6 +38,8 @@ fun WhisperNavHost(
     val mainViewModel: MainViewModel = viewModel(
         factory = MainViewModel.Factory(dataStoreManager)
     )
+
+    val exploreViewModel: ExploreViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -47,7 +52,8 @@ fun WhisperNavHost(
                 onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
                 onNavigateToChat = { roomId, roomName ->
                     navController.navigate(Screen.Chat.createRoute(roomId, roomName))
-                }
+                },
+                onNavigateToExplore = { navController.navigate(Screen.Explore.route)}
             )
         }
 
@@ -87,5 +93,15 @@ fun WhisperNavHost(
                 dataStoreManager = dataStoreManager
             )
         }
+
+        composable(Screen.Explore.route) {
+            ExploreScreen(
+                exploreViewModel,
+                onNavigateToChat = { roomId, roomName ->
+                    navController.navigate(Screen.Chat.createRoute(roomId, roomName))
+                }
+            )
+        }
+
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -42,7 +43,8 @@ fun MainScreen(
     viewModel: MainViewModel,
     onNavigateToJoin: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToChat: (String, String) -> Unit
+    onNavigateToChat: (String, String) -> Unit,
+    onNavigateToExplore: () -> Unit
 ) {
     // Move your existing Scaffold and content here from App.kt
     // Replace direct state changes with navigation calls
@@ -71,6 +73,9 @@ fun MainScreen(
                     }
                     IconButton(onClick = { onNavigateToSettings() }) {
                         Icon(Icons.Default.Settings, "Edit settings")
+                    }
+                    IconButton(onClick = { onNavigateToExplore() }) {
+                        Icon(Icons.Default.Search, "Explore")
                     }
                 }
             )
