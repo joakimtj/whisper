@@ -9,6 +9,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.whisper.ui.screens.*
 
+// Old shit
+
 @Composable
 fun WhisperNavHost() {
     val navController = rememberNavController()
