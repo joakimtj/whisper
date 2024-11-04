@@ -9,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.whisper.viewmodel.MainViewModel
@@ -20,6 +19,7 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
                onNavigateUp: () -> Unit,
                onNavigateCreate: () -> Unit)
 {
+    val context = LocalContext.current
     var code by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
@@ -51,7 +51,6 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val context = LocalContext.current
             TextField(
                 value = code,
                 onValueChange = { code = it },
@@ -62,6 +61,12 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
+                    if (code.isBlank())
+                    {
+                        Toast.makeText(context, "Please enter a code.",
+                            Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     viewModel.joinRoom(
                         code,
                         onError = {

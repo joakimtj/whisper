@@ -1,5 +1,6 @@
 package com.example.whisper.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -7,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -17,6 +19,8 @@ import com.example.whisper.utils.formatDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Unit) {
+    val context = LocalContext.current
+
     var name by remember { mutableStateOf("") }
 
     var showDateTimePicker by remember { mutableStateOf(false)}
@@ -87,10 +91,12 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
                 onClick = {
                     if (name.isBlank())
                     {
+                        Toast.makeText(context, "Please enter a name.", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
                     if (expirationDateTime == null)
                     {
+                        Toast.makeText(context, "Please select a date.", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
                     viewModel.createRoom(
