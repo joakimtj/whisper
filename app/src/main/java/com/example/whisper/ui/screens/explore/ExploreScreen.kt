@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,11 @@ fun ExploreScreen(
     onNavigateToChat: (String, String) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchPublicRooms() // Fetch rooms on screen launch
+    }
+
     val rooms = viewModel.publicRooms
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
