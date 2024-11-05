@@ -1,5 +1,6 @@
 package com.example.whisper.ui.screens.chat.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -49,10 +50,12 @@ fun RoomItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                /*
-                    This works because MainViewModel.joinRoom() does not use public attribute,
-                    because of this, I assume this resolves to null (or false?)
-                 */
+                // MainViewModel.joinRoom() instantiates a val room of RoomData(),
+                // it does not set public attrib and it will therefore default to false
+                // The local instances of these joined rooms will then have erroneous
+                // public attributes but because we do not resync (edit?) rooms from clients
+                // this is not an issue
+                Log.d("DEBUG", "${room.public}")
                 if (!room.public) {
                     IconButton(
                         onClick = { onLeave(room.id) },
