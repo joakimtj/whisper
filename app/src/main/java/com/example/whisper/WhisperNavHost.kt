@@ -97,10 +97,11 @@ fun WhisperNavHost(
         composable(Screen.Explore.route) {
             ExploreScreen(
                 exploreViewModel,
+                mainViewModel,
                 onNavigateToChat = { roomId, roomName ->
                     navController.navigate(Screen.Chat.createRoute(roomId, roomName))
                 },
-                onNavigateUp = { navController.navigate(Screen.Main.route) }
+                onNavigateUp = { navController.navigate(Screen.Main.route) },
             )
         }
 

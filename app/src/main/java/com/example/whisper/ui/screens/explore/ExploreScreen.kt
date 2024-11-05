@@ -1,5 +1,6 @@
 package com.example.whisper.ui.screens.explore
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,8 +37,9 @@ import com.example.whisper.viewmodel.MainViewModel
 @Composable
 fun ExploreScreen(
     viewModel: ExploreViewModel,
+    mainViewModel: MainViewModel,
     onNavigateToChat: (String, String) -> Unit,
-    onNavigateUp: () -> Unit
+    onNavigateUp: () -> Unit,
 ) {
     val rooms = viewModel.publicRooms
     val isLoading by viewModel.isLoading.collectAsState()
@@ -97,7 +99,13 @@ fun ExploreScreen(
                 RoomList(
                     rooms = rooms,
                     onLeaveRoom = {},
-                    onRoomClick = { room -> onNavigateToChat(room.id, room.name) },
+                    onRoomClick = { room ->
+                        mainViewModel.joinRoom(
+                            code = room.code,
+                            onSuccess = {onNavigateToChat(room.id, room.name)},
+                            onError = {error -> Log.d("ERROR", error)}
+                        )
+                         },
                     modifier = Modifier.fillMaxSize()
                 )
             }
