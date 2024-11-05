@@ -65,7 +65,7 @@ fun MainScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
-                title = { Text("Chat Rooms") },
+                title = { Text("Whisper™") },
                 navigationIcon = {
                     TextButton(
                         onClick = { onNavigateToExplore() }
