@@ -181,6 +181,12 @@ class MainViewModel(
                     lastActivity = lastActivity
                 )
 
+                // Check if room is already joined
+                if (_joinedRooms.any { it.id == room.id }) {
+                    onError("You're already in this room")
+                    return@addOnSuccessListener
+                }
+
                 if (!_joinedRooms.any { it.id == room.id }) {
                     _joinedRooms.add(room)
                     saveRoom(room)
