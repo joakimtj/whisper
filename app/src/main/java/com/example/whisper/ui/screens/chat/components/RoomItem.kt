@@ -49,15 +49,17 @@ fun RoomItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                IconButton(
-                    onClick = { onLeave(room.id) },
-                    modifier = Modifier.padding(start = 8.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = "Leave Room",
-                        tint = MaterialTheme.colorScheme.error
-                    )
+                if (!room.public) {
+                    IconButton(
+                        onClick = { onLeave(room.id) },
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Leave Room",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
         }
