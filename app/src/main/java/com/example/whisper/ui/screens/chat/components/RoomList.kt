@@ -17,6 +17,7 @@ fun RoomList(
     rooms: List<RoomData>,
     onLeaveRoom: (String) -> Unit,
     onRoomClick: (RoomData) -> Unit,
+    isPublic: Boolean,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -29,7 +30,8 @@ fun RoomList(
                 RoomItem(
                     room = room,
                     onLeave = onLeaveRoom,
-                    onClick = onRoomClick
+                    onClick = onRoomClick,
+                    isPublic
                 )
             }
             else {

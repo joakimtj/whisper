@@ -112,7 +112,8 @@ fun ExploreScreen(
                             onError = {error -> Log.d("ERROR", error)}
                         )
                          },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    isPublic = true
                 )
             }
 

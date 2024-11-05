@@ -17,7 +17,8 @@ import com.example.whisper.utils.formatDateTime
 fun RoomItem(
     room: RoomData,
     onLeave: (String) -> Unit,
-    onClick: (RoomData) -> Unit
+    onClick: (RoomData) -> Unit,
+    isPublic: Boolean
 ) {
     Card(
         modifier = Modifier
@@ -56,7 +57,7 @@ fun RoomItem(
                 // public attributes but because we do not resync (edit?) rooms from clients
                 // this is not an issue
                 Log.d("DEBUG", "${room.public}")
-                if (!room.public) {
+                if (!isPublic) {
                     IconButton(
                         onClick = { onLeave(room.id) },
                         modifier = Modifier.padding(start = 8.dp)

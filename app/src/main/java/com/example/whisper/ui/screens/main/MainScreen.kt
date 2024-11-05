@@ -125,7 +125,8 @@ fun MainScreen(
                     rooms = viewModel.joinedRooms,
                     onLeaveRoom = { roomId -> viewModel.leaveRoom(roomId) },
                     onRoomClick = { room -> onNavigateToChat(room.id, room.name) },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    isPublic = false
                 )
             }
 
