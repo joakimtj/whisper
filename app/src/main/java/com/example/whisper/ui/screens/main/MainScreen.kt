@@ -79,12 +79,6 @@ fun MainScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { showJoinDialog = true }) {
-                        Icon(Icons.Default.Add, "Join Room")
-                    }
-                    IconButton(onClick = { showCreateDialog = true }) {
-                        Icon(Icons.Default.Create, "Create Room")
-                    }
                     IconButton(onClick = { onNavigateToSettings() }) {
                         Icon(Icons.Default.Settings, "Edit settings")
                     }
