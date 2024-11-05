@@ -49,6 +49,10 @@ fun RoomItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+                /*
+                    This works because MainViewModel.joinRoom() does not use public attribute,
+                    because of this, I assume this resolves to null (or false?)
+                 */
                 if (!room.public) {
                     IconButton(
                         onClick = { onLeave(room.id) },

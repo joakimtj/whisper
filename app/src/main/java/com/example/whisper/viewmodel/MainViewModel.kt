@@ -172,6 +172,7 @@ class MainViewModel(
                 val lastActivity = document.getTimestamp("lastActivity")?.toDate()?.time
                     ?: System.currentTimeMillis()
 
+                // By not using public attrib here, the chatroom list, will still show leave btn
                 val room = RoomData(
                     id = document.id,
                     name = document.getString("name") ?: "",
