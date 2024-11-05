@@ -16,6 +16,7 @@ import com.example.whisper.data.local.DataStoreManager
 import com.example.whisper.viewmodel.ChatViewModel
 import com.example.whisper.data.model.Message
 import com.example.whisper.utils.formatTime
+import com.example.whisper.utils.sortByTimestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,7 +127,7 @@ fun MessageList(
         modifier = modifier,
         reverseLayout = true
     ) {
-        items(messages) { message ->
+        items(messages.sortByTimestamp()) { message ->
             MessageItem(message)
         }
     }
