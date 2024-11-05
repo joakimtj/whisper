@@ -5,9 +5,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.whisper.data.model.Message
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import java.util.Date
 
 // ChatViewModel.kt
 class ChatViewModel : ViewModel() {
@@ -41,11 +44,17 @@ class ChatViewModel : ViewModel() {
                 snapshot?.let { querySnapshot ->
                     _messages.clear()
                     _messages.addAll(querySnapshot.documents.map { doc ->
+                        // Handle both server timestamp and local timestamp cases
+                        val timestamp = when (val ts = doc.get("timestamp")) {
+                            is Timestamp -> ts.seconds * 1000L
+                            else -> System.currentTimeMillis() // Fallback for pending server timestamp
+                        }
+
                         Message(
                             id = doc.id,
                             content = doc.getString("content") ?: "",
                             senderName = doc.getString("senderName") ?: "",
-                            timestamp = doc.getLong("timestamp") ?: 0L,
+                            timestamp = timestamp,
                             tripcode = doc.getString("tripcode")
                         )
                     })
@@ -59,7 +68,7 @@ class ChatViewModel : ViewModel() {
         val message = hashMapOf(
             "content" to content,
             "senderName" to senderName,
-            "timestamp" to System.currentTimeMillis(),
+            "timestamp" to FieldValue.serverTimestamp(),  // Use server timestamp
             "tripcode" to tripcode
         )
 
