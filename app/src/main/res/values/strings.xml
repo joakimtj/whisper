@@ -23,6 +23,10 @@
     <string name="change">Change</string>
     <string name="submit">Submit</string>
 
+    <!-- Chat -->
+    <string name="msg_field_placeholder">Message</string>
+    <string name="copied_clipboard">Copied to clipboard</string>
+
     <!-- DateTimePicker -->
     <string name="select_time">Select Time</string>
     <string name="change_time">Change Time</string>

@@ -15,8 +15,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.R
 import com.example.whisper.data.local.DataStoreManager
 import com.example.whisper.viewmodel.ChatViewModel
 import com.example.whisper.data.model.Message
@@ -143,7 +145,7 @@ fun ChatInput(
         TextField(
             value = messageText,
             onValueChange = onMessageChange,
-            placeholder = { Text("Type a message") },
+            placeholder = { Text(stringResource(R.string.msg_field_placeholder)) },
             modifier = Modifier.weight(1f),
             singleLine = true
         )
