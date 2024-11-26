@@ -9,8 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.R
 import com.example.whisper.ui.dialogs.DateTimePickerDialog
 import com.example.whisper.viewmodel.MainViewModel
 import com.example.whisper.utils.formatDateTime
@@ -43,7 +45,7 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("Select name and expiration") },
+                title = { Text(stringResource(R.string.select_name_expiration)) },
                 navigationIcon = {
                     // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
                     // Passed navController.popBackStack() in WhisperNavHost
@@ -66,7 +68,7 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
             TextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Enter name") },
+                label = { Text(stringResource(R.string.enter_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -76,7 +78,7 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Make room public"
+                    text = stringResource(R.string.make_public)
                 )
 
                 Checkbox(
@@ -94,13 +96,13 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
             ) {
                 Text(
                     text = if (expirationDateTime != null) {
-                        "Expires: ${formatDateTime(expirationDateTime!!)}"
+                        stringResource(R.string.expires_at, formatDateTime(expirationDateTime!!))
                     } else {
-                        "Select expiration date and time"
+                        stringResource(R.string.select_datetime_expiration)
                     }
                 )
                 TextButton(onClick = { showDateTimePicker = true }) {
-                    Text(if (expirationDateTime == null) "Select" else "Change")
+                    Text(if (expirationDateTime == null) stringResource(R.string.select) else stringResource(R.string.change))
                 }
             }
 
@@ -128,7 +130,7 @@ fun CreateScreen(viewModel: MainViewModel = viewModel(), onNavigateUp: () -> Uni
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Submit")
+                Text(stringResource(R.string.submit))
             }
         }
     }

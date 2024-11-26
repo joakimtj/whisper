@@ -1,3 +1,40 @@
 <resources>
+    <!-- Main Screen -->
     <string name="app_name">whisper</string>
+    <string name="no_joined_rooms">No rooms joined yet</string>
+    <string name="create_join_suggestion">Create a new room or join an existing one</string>
+    <string name="discover">Discover</string>
+    <string name="code">Code: %1$s</string>
+
+    <!-- Join -->
+    <string name="create_or_join">Create or Join Room</string>
+    <string name="join_or_create">Join or Create Room</string>
+    <string name="join_random">Join a random, public room</string>
+    <string name="spin_room">Spin the wheel!</string>
+    <string name="enter_code">Enter Code</string>
+
+    <!-- Create -->
+    <string name="select_name_expiration">Select name and expiration</string>
+    <string name="enter_name">Enter name</string>
+    <string name="make_public">Make room public</string>
+    <string name="select_datetime_expiration">Select expiration date and time</string>
+    <string name="expires_at">Expires: %1$s</string>
+    <string name="select">Select</string>
+    <string name="change">Change</string>
+    <string name="submit">Submit</string>
+
+    <!-- DateTimePicker -->
+    <string name="select_time">Select Time</string>
+    <string name="change_time">Change Time</string>
+
+    <!-- Public -->
+    <string name="public_rooms">Public Rooms</string>
+    <string name="no_public_rooms">No public rooms are available</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="display_name">Display Name</string>
+    <string name="tripcode">Tripcode</string>
+    <string name="your_id">Your identifier: %1$s</string>
+    <string name="save">Save</string>
 </resources>

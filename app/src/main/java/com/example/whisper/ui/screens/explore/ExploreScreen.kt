@@ -29,8 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.whisper.ui.screens.chat.components.RoomList
+import com.example.whisper.R
+import com.example.whisper.ui.screens.main.components.RoomList
 import com.example.whisper.viewmodel.ExploreViewModel
 import com.example.whisper.viewmodel.MainViewModel
 
@@ -51,9 +53,6 @@ fun ExploreScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
-    // Dialogs
-    var showJoinDialog by remember { mutableStateOf(false) }
-    var showCreateDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
@@ -90,13 +89,13 @@ fun ExploreScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "No public rooms are available",
+                        text = stringResource(R.string.no_public_rooms),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Create a new room or join an existing one",
+                        text = stringResource(R.string.create_join_suggestion),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

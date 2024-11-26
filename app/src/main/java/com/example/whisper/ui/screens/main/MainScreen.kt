@@ -30,9 +30,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.whisper.ui.screens.chat.components.RoomList
+import com.example.whisper.R
+import com.example.whisper.ui.screens.main.components.RoomList
 import com.example.whisper.ui.dialogs.CreateRoomDialog
 import com.example.whisper.viewmodel.MainViewModel
 
@@ -45,12 +47,8 @@ fun MainScreen(
     onNavigateToChat: (String, String) -> Unit,
     onNavigateToExplore: () -> Unit
 ) {
-    // Move your existing Scaffold and content here from App.kt
-    // Replace direct state changes with navigation calls
-    // For example: instead of `currentRoom = room`,
-    // use `onNavigateToChat(room.id, room.name)`
 
-    // Dialogs
+    // Dialogs -- deprecated
     var showJoinDialog by remember { mutableStateOf(false) }
     var showCreateDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -62,13 +60,13 @@ fun MainScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
-                title = { Text("Whisper™") },
+                title = { Text(stringResource(id = R.string.app_name)) },
                 navigationIcon = {
                     TextButton(
                         onClick = { onNavigateToExplore() }
                     ) {
                         Text(
-                            "Discover",
+                            stringResource(R.string.discover),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.secondary,
                             fontWeight = FontWeight.Bold
@@ -106,13 +104,13 @@ fun MainScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "No rooms joined yet",
+                        text = stringResource(id = R.string.no_joined_rooms),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Create a new room or join an existing one",
+                        text = stringResource(id = R.string.create_join_suggestion),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

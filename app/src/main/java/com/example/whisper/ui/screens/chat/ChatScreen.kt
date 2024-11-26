@@ -152,9 +152,6 @@ fun MessageItem(message: Message) {
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    // Tripcode is never null because...
-                    // ... get tripcode func returns "" when null
-                    // TODO: Change tripcode type in Message obj to just string then remove cond
                     if (message.tripcode != null) {
                         Text(
                             text = " " + message.tripcode,

@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.whisper.R
 import com.example.whisper.data.local.DataStoreManager
 import kotlinx.coroutines.launch
 
@@ -47,7 +49,7 @@ fun SettingsScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(
@@ -68,20 +70,20 @@ fun SettingsScreen(
             TextField(
                 value = displayName,
                 onValueChange = { displayName = it },
-                label = { Text("Display Name") },
+                label = { Text(stringResource(R.string.display_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 value = tripcode,
                 onValueChange = { tripcode = it },
-                label = { Text("Tripcode") },
+                label = { Text(stringResource(R.string.tripcode)) },
                 modifier = Modifier.fillMaxWidth()
             )
             if (generatedTripcode.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Your identifier: !${generatedTripcode}",
+                    text = stringResource(R.string.your_id, generatedTripcode),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -91,15 +93,15 @@ fun SettingsScreen(
                 onClick = {
                     scope.launch {
                         dataStoreManager.saveUserName(displayName)
+                        generatedTripcode = tripcode;
                         if (tripcode.isNotEmpty()) {
                             dataStoreManager.saveTripcode(tripcode)
                         }
-
                     }
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
         }
     }

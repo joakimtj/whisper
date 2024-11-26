@@ -9,8 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.whisper.R
 import com.example.whisper.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +33,7 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("Create or Join Chat") },
+                title = { Text(stringResource(R.string.create_or_join)) },
                 navigationIcon = {
                     // https://developer.android.com/develop/ui/compose/components/app-bars-navigate
                     // Passed navController.popBackStack() in WhisperNavHost
@@ -54,7 +56,7 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
             TextField(
                 value = code,
                 onValueChange = { code = it },
-                label = { Text("Enter Code") },
+                label = { Text(stringResource(R.string.enter_code)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -78,7 +80,7 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
                     )
                 }
             ) {
-                Text("Join or Create Room")
+                Text(stringResource(R.string.join_or_create))
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text("Or")
@@ -93,7 +95,7 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
                 Text("Scan QR Code")
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Feeling silly? Join a random, public room!")
+            Text(stringResource(R.string.join_random))
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
@@ -107,7 +109,7 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Spin the wheel!")
+                Text(stringResource(R.string.spin_room))
             }
         }
 

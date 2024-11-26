@@ -1,6 +1,5 @@
 package com.example.whisper.ui.dialogs
 
-// DateTimePickerDialog.kt
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -9,7 +8,9 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.whisper.R
 import java.time.*
 
 // Don't bother editing this component. It blows up no matter what you do. Fucking piece of shit.
@@ -100,7 +101,7 @@ fun DateTimePickerDialog(
                 )
 
                 TextButton(onClick = { showTimePicker = true }) {
-                    Text(text = "Change Time",
+                    Text(text = stringResource(R.string.change_time),
                         style = MaterialTheme.typography.bodyLarge)
                 }
             }
@@ -120,7 +121,7 @@ fun TimePickerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Time") },
+        title = { Text(stringResource(R.string.select_time)) },
         text = {
             Box(
                 modifier = Modifier

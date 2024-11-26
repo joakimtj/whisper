@@ -1,6 +1,5 @@
 package com.example.whisper.ui.dialogs
 
-// CreateRoomDialog.kt
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*

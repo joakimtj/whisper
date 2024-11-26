@@ -1,6 +1,5 @@
-package com.example.whisper.ui.screens.chat.components
+package com.example.whisper.ui.screens.main.components
 
-// RoomsList.kt
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

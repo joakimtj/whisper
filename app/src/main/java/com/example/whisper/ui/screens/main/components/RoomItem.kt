@@ -1,4 +1,4 @@
-package com.example.whisper.ui.screens.chat.components
+package com.example.whisper.ui.screens.main.components
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -9,7 +9,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.whisper.R
 import com.example.whisper.data.model.RoomData
 import com.example.whisper.utils.formatDateTime
 
@@ -41,12 +43,12 @@ fun RoomItem(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Code: ${room.code}",
+                        text = stringResource(R.string.code, room.code),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Expires: ${formatDateTime(room.expiresAt)}",
+                        text = stringResource(R.string.expires_at, formatDateTime(room.expiresAt)),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
