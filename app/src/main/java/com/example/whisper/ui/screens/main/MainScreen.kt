@@ -1,5 +1,6 @@
 package com.example.whisper.ui.screens.main
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,11 +20,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,9 +49,25 @@ fun MainScreen(
     viewModel: MainViewModel,
     onNavigateToJoin: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToChat: (String, String) -> Unit,
+    onNavigateToChat: (String, String, String) -> Unit,
     onNavigateToExplore: () -> Unit
 ) {
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val isNetworkAvailable = viewModel.isNetworkAvailable()
+
+    Log.d("NETWORK", isNetworkAvailable.toString())
+
+    if (!isNetworkAvailable) {
+
+        LaunchedEffect(Unit) {
+            snackbarHostState.showSnackbar(
+                message = "No internet connection",
+                duration = SnackbarDuration.Indefinite
+            )
+        }
+    }
 
     // Dialogs -- deprecated
     var showJoinDialog by remember { mutableStateOf(false) }
@@ -54,6 +75,7 @@ fun MainScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -119,7 +141,7 @@ fun MainScreen(
                 RoomList(
                     rooms = viewModel.joinedRooms,
                     onLeaveRoom = { roomId -> viewModel.leaveRoom(roomId) },
-                    onRoomClick = { room -> onNavigateToChat(room.id, room.name) },
+                    onRoomClick = { room -> onNavigateToChat(room.id, room.name, room.code) },
                     modifier = Modifier.fillMaxSize(),
                     isPublic = false
                 )

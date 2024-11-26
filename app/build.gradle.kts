@@ -60,8 +60,6 @@ dependencies {
     // Android Studio suggested it be corrected to what you see un-commentated below
     implementation(platform(libs.firebase.bom))
 
-    // TODO: Add the dependencies for Firebase products you want to use
-
     // When using the BoM, don't specify versions in Firebase dependencies
     // implementation("com.google.firebase:firebase-analytics")
     implementation(libs.firebase.analytics)

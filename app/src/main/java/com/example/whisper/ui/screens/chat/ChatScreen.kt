@@ -1,5 +1,9 @@
 package com.example.whisper.ui.screens.chat
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.whisper.data.local.DataStoreManager
@@ -17,19 +22,28 @@ import com.example.whisper.viewmodel.ChatViewModel
 import com.example.whisper.data.model.Message
 import com.example.whisper.utils.formatTime
 import com.example.whisper.utils.sortByTimestamp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     roomId: String,
     roomName: String,
+    roomCode: String,
     onNavigateUp: () -> Unit,
     viewModel: ChatViewModel = viewModel(),
     dataStoreManager: DataStoreManager
 ) {
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
     var messageText by remember { mutableStateOf("") }
     var senderName by remember { mutableStateOf("") }
     var tripcode by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
     // Load the username from MainViewModel
     LaunchedEffect(Unit) {
         dataStoreManager.getUserName().collect { name ->
@@ -48,13 +62,38 @@ fun ChatScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text(roomName) },
+                title = {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = roomName,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Text(
+                            text = roomCode,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            modifier = Modifier.clickable(
+                                onClick = {
+                                    val clip = ClipData.newPlainText("Room Code", roomCode)
+                                    clipboardManager.setPrimaryClip(clip)
+
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar("Copied to clipboard")
+                                    }
+                                }
+                            )
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")

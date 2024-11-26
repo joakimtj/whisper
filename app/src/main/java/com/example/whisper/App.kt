@@ -10,5 +10,6 @@ fun App() {
     val context = LocalContext.current
     val application = context.applicationContext as WhisperApplication
 
-    WhisperNavHost(dataStoreManager = application.container.dataStoreManager)
+    WhisperNavHost(dataStoreManager = application.container.dataStoreManager,
+        networkChecker = application.container.networkChecker)
 }

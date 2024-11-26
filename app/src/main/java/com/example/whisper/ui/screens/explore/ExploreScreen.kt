@@ -41,7 +41,7 @@ import com.example.whisper.viewmodel.MainViewModel
 fun ExploreScreen(
     viewModel: ExploreViewModel,
     mainViewModel: MainViewModel,
-    onNavigateToChat: (String, String) -> Unit,
+    onNavigateToChat: (String, String, String) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
 
@@ -107,7 +107,7 @@ fun ExploreScreen(
                     onRoomClick = { room ->
                         mainViewModel.joinRoom(
                             code = room.code,
-                            onSuccess = {onNavigateToChat(room.id, room.name)},
+                            onSuccess = {onNavigateToChat(room.id, room.name, room.code)},
                             onError = {error -> Log.d("ERROR", error)}
                         )
                          },

@@ -10,9 +10,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
-import java.util.Date
 
-// ChatViewModel.kt
 class ChatViewModel : ViewModel() {
     private val _messages = mutableStateListOf<Message>()
     val messages: List<Message> = _messages

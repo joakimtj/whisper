@@ -42,7 +42,11 @@ class DataStoreManager(private val context: Context) {
         context.dataStore.edit { preferences ->
             // Save both the input and the generated tripcode
             preferences[PreferencesKeys.TRIPCODE_INPUT] = input
-            preferences[PreferencesKeys.TRIPCODE] = TripcodeUtils.generateTripcode(input)
+            if (input != "") {
+                preferences[PreferencesKeys.TRIPCODE] = TripcodeUtils.generateTripcode(input)
+            } else {
+                preferences[PreferencesKeys.TRIPCODE] = input
+            }
         }
     }
 

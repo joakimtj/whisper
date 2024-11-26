@@ -6,23 +6,39 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.data.local.DataStoreManager
 import com.example.whisper.data.model.RoomData
+import com.example.whisper.data.network.NetworkConnectivityChecker
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
 
 // MainViewModel.kt
 class MainViewModel(
-    private val dataStoreManager: DataStoreManager
+    private val dataStoreManager: DataStoreManager,
+    private val networkChecker: NetworkConnectivityChecker
 ): ViewModel() {
     private val _joinedRooms = mutableStateListOf<RoomData>()
     val joinedRooms: List<RoomData> = _joinedRooms
+
+    private val _isNetworkAvailable = MutableStateFlow(false)
+    val isNetworkAvailable = _isNetworkAvailable.asStateFlow()
 
     private val db = FirebaseFirestore.getInstance()
     private val scope = viewModelScope
 
     init {
         loadJoinedRooms()
+        viewModelScope.launch {
+            networkChecker.observeNetworkConnectivity().collect { isAvailable ->
+                _isNetworkAvailable.value = isAvailable
+            }
+        }
+    }
+
+    fun isNetworkAvailable(): Boolean {
+        return networkChecker.isNetworkAvailable()
     }
 
     private fun loadJoinedRooms() {
@@ -220,12 +236,13 @@ class MainViewModel(
     }
 
     class Factory(
-        private val dataStoreManager: DataStoreManager
+        private val dataStoreManager: DataStoreManager,
+        private val networkChecker: NetworkConnectivityChecker
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                return MainViewModel(dataStoreManager) as T
+                return MainViewModel(dataStoreManager, networkChecker) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

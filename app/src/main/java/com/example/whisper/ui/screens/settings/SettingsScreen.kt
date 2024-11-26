@@ -94,9 +94,7 @@ fun SettingsScreen(
                     scope.launch {
                         dataStoreManager.saveUserName(displayName)
                         generatedTripcode = tripcode;
-                        if (tripcode.isNotEmpty()) {
-                            dataStoreManager.saveTripcode(tripcode)
-                        }
+                        dataStoreManager.saveTripcode(tripcode)
                     }
                 },
                 modifier = Modifier.align(Alignment.End)
