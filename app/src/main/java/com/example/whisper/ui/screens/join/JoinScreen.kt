@@ -83,18 +83,6 @@ fun JoinScreen(viewModel: MainViewModel = viewModel(),
                 Text(stringResource(R.string.join_or_create))
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Or")
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    Toast.makeText(context, "These things - they take time.",
-                        Toast.LENGTH_SHORT).show()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Scan QR Code")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
             Text(stringResource(R.string.join_random))
             Spacer(modifier = Modifier.height(16.dp))
             Button(

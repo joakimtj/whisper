@@ -1,6 +1,7 @@
 package com.example.whisper.ui.screens.explore
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.whisper.R
@@ -44,6 +46,8 @@ fun ExploreScreen(
     onNavigateToChat: (String, String, String) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
+
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.fetchPublicRooms() // Fetch rooms on screen launch
@@ -108,7 +112,9 @@ fun ExploreScreen(
                         mainViewModel.joinRoom(
                             code = room.code,
                             onSuccess = {onNavigateToChat(room.id, room.name, room.code)},
-                            onError = {error -> Log.d("ERROR", error)}
+                            onError = {error ->
+                                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                Log.d("ERROR", error)}
                         )
                          },
                     modifier = Modifier.fillMaxSize(),
