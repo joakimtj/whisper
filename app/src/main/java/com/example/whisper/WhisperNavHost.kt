@@ -98,11 +98,10 @@ fun WhisperNavHost(
             )
         ) { backStackEntry ->
             val roomCode = backStackEntry.arguments?.getString("roomCode") ?: ""
-            Log.d("DEBUG", "${roomCode}")
             ChatScreen(
                 roomId = backStackEntry.arguments?.getString("roomId") ?: "",
                 roomName = backStackEntry.arguments?.getString("roomName") ?: "",
-                onNavigateUp = { navController.popBackStack() },
+                onNavigateUp = { navController.navigate(Screen.Main.route) },
                 roomCode = roomCode,
                 dataStoreManager = dataStoreManager
             )

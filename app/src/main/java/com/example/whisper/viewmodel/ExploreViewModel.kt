@@ -43,13 +43,14 @@ class ExploreViewModel : ViewModel() {
                 val currentTime = System.currentTimeMillis()
 
                 /*  Reintroduce these later I guess. (When collection no longer has invalid data?)
-                    .whereGreaterThan("expiresAt", Timestamp(currentTime / 1000, 0))
+
                     .orderBy("expiresAt", Query.Direction.ASCENDING)
                     .orderBy("lastActivity", Query.Direction.DESCENDING)
                     .limit(50) // Limit to prevent loading too many rooms
                  */
                 db.collection("rooms")
                     .whereEqualTo("public", true)
+                    .whereGreaterThan("expiresAt", Timestamp(currentTime / 1000, 0))
                     .get()
                     .addOnSuccessListener { documents ->
                         if (documents.isEmpty) {
