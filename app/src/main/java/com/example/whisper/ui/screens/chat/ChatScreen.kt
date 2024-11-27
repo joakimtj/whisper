@@ -3,6 +3,8 @@ package com.example.whisper.ui.screens.chat
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -108,10 +110,17 @@ fun ChatScreen(
                 messageText = messageText,
                 onMessageChange = { messageText = it },
                 onSendMessage = {
-                    if (messageText.isNotBlank() && senderName.isNotBlank()) {
-                        viewModel.sendMessage(roomId, messageText, senderName, tripcode)
-                        messageText = ""
+                    if (senderName.isBlank()) {
+                        Toast.makeText(context,
+                            "Please set a display name in settings.",
+                            Toast.LENGTH_SHORT).show()
+                        return@ChatInput
                     }
+                    if (messageText.isBlank()) {
+                        return@ChatInput
+                    }
+                    viewModel.sendMessage(roomId, messageText, senderName, tripcode)
+                    messageText = ""
                 }
             )
         }
